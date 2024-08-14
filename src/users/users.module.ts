@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { UsersService } from './users.service';
-import { UserScheduleService } from './user-schedule.service';
 import { UsersController } from './users.controller';
 import { RolesGuard } from './roles.guard';
+import { UsersGateway } from './users.gateway';
 
 @Module({
   controllers: [UsersController],
@@ -13,8 +13,8 @@ import { RolesGuard } from './roles.guard';
       useClass: RolesGuard,
     },
     UsersService,
-    UserScheduleService,
+    UsersGateway,
   ],
-  exports: [UsersService, UserScheduleService],
+  exports: [UsersService],
 })
 export class UsersModule {}
