@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { RolesGuard } from './roles.guard';
 import { UsersGateway } from './users.gateway';
+import { ScheduleService } from './schedule.service';
 
 @Module({
   controllers: [UsersController],
@@ -14,6 +15,7 @@ import { UsersGateway } from './users.gateway';
     },
     UsersService,
     UsersGateway,
+    ScheduleService,
   ],
   exports: [UsersService],
 })
