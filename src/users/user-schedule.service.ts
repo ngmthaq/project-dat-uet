@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, Interval } from '@nestjs/schedule';
 
 @Injectable()
-export class ScheduleService {
-  private readonly logger = new Logger(ScheduleService.name);
+export class UserScheduleService {
+  private readonly logger = new Logger(UserScheduleService.name);
 
   /**
    * https://docs.nestjs.com/techniques/task-scheduling#task-scheduling
