@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  nestjs.web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "80:3000"
+      - "443:3000"
