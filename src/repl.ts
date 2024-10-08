@@ -1,8 +1,3 @@
-import { repl } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { bootstrapRepl } from "./bootstrap";
 
-async function bootstrap() {
-  await repl(AppModule);
-}
-
-bootstrap();
+bootstrapRepl();

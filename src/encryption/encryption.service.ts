@@ -1,32 +1,30 @@
-import { ConfigService } from '@nestjs/config';
-import { Injectable } from '@nestjs/common';
-import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
-import { promisify } from 'util';
+import { ConfigService } from "@nestjs/config";
+import { Injectable } from "@nestjs/common";
+import { createCipheriv, createDecipheriv, randomBytes, scrypt } from "crypto";
+import { promisify } from "util";
 
 @Injectable()
 export class EncryptionService {
-  constructor(private configService: ConfigService) {}
+  public constructor(private configService: ConfigService) {}
 
-  async encrypt(plainText: string) {
+  public async encrypt(plainText: string) {
     const iv = randomBytes(16);
-    const secret = this.configService.get<string>('secret');
-    const key = (await promisify(scrypt)(secret, 'salt', 32)) as Buffer;
-    const cipher = createCipheriv('aes-256-ctr', key, iv);
-    const encryptedText = Buffer.concat([
-      cipher.update(plainText),
-      cipher.final(),
-    ]);
-
+    const secret = this.configService.get<string>("secret");
+    const key = (await promisify(scrypt)(secret, "salt", 32)) as Buffer;
+    const algorithm = this.configService.get<string>("algorithm");
+    const cipher = createCipheriv(algorithm, key, iv);
+    const hashedText = cipher.update(plainText);
+    const final = cipher.final();
+    const encryptedText = Buffer.concat([hashedText, final]);
     return { iv, key, encryptedText };
   }
 
-  async decrypt(encryptedText: Buffer, key: string, iv: string) {
-    const decipher = createDecipheriv('aes-256-ctr', key, iv);
-    const decryptedText = Buffer.concat([
-      decipher.update(encryptedText),
-      decipher.final(),
-    ]);
-
-    return decryptedText;
+  public async decrypt(encryptedText: Buffer, key: string, iv: string) {
+    const algorithm = this.configService.get<string>("algorithm");
+    const decipher = createDecipheriv(algorithm, key, iv);
+    const decryptedText = decipher.update(encryptedText);
+    const final = decipher.final();
+    const plainText = Buffer.concat([decryptedText, final]);
+    return plainText;
   }
 }

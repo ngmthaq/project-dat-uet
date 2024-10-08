@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
+import { IsNotEmpty, IsString, IsStrongPassword } from "class-validator";
 
 export class LoginDto {
   @IsNotEmpty()
   @IsString()
-  username: string;
+  public username: string;
 
   @IsNotEmpty()
   @IsStrongPassword({
@@ -13,5 +13,5 @@ export class LoginDto {
     minLowercase: 1,
     minSymbols: 1,
   })
-  password: string;
+  public password: string;
 }
