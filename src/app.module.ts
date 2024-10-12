@@ -8,6 +8,7 @@ import { StaticModule } from "./static/static.module";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./users/user.module";
 import { ScheduleModule } from "./schedule/schedule.module";
+import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ScheduleModule } from "./schedule/schedule.module";
     HashingModule,
     StaticModule,
     ScheduleModule,
+    LoggerModule,
     AuthModule,
     UserModule,
   ],

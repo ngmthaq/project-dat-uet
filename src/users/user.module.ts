@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { LoggerModule } from "src/logger/logger.module";
 import { UserController } from "./user.controller";
 import { UserService } from "./providers/user.service";
 import { RoleGuard } from "./providers/role.guard";
@@ -10,7 +11,7 @@ import { UserRepository } from "./providers/user.repository";
 import { User } from "./models/user.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]), LoggerModule],
   controllers: [UserController],
   providers: [
     { provide: APP_GUARD, useClass: RoleGuard },

@@ -1,9 +1,12 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Cron, Interval } from "@nestjs/schedule";
+import { LoggerService } from "src/logger/logger.service";
 
 @Injectable()
 export class UserSchedule {
-  private readonly logger = new Logger("UserSchedule");
+  public constructor(private loggerService: LoggerService) {
+    this.loggerService.setContext(UserSchedule.name);
+  }
 
   /**
    * https://docs.nestjs.com/techniques/task-scheduling#task-scheduling
@@ -20,11 +23,11 @@ export class UserSchedule {
    */
   @Cron("45 * * * * *")
   public handleCron() {
-    this.logger.debug("Called when the current second is 45");
+    this.loggerService.debug("Called when the current second is 45");
   }
 
   @Interval(10000) // ms
   public handleInterval() {
-    this.logger.debug("Called every 10 seconds");
+    this.loggerService.debug("Called every 10 seconds");
   }
 }
