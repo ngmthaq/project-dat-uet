@@ -1,6 +1,8 @@
 # Use Node 20 as parent image
 FROM node:20.11.1
 
+ARG PORT
+
 # Change the working directory on the Docker image to /app
 WORKDIR /app
 
@@ -17,10 +19,10 @@ RUN yarn install
 COPY . .
 
 # Expose application port
-EXPOSE 3000
+EXPOSE ${PORT}
 
 # Build the application
 RUN yarn build
 
 # Serve the application
-RUN yarn start:prod
+CMD [ "yarn", "start:prod" ]

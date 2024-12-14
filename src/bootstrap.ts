@@ -4,11 +4,12 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { useContainer } from "class-validator";
-import { LoggerService } from "./logger/logger.service";
+import { LoggerService } from "./@core/logger/logger.service";
 import { AppModule } from "./app.module";
 
 export async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const port = process.env.APP_PORT;
   app.use(helmet());
   app.use(cookieParser());
   app.useLogger(app.get(LoggerService));
@@ -22,7 +23,9 @@ export async function bootstrap() {
   documentBuilder.setDescription("The API Description");
   const document = SwaggerModule.createDocument(app, documentBuilder.build());
   SwaggerModule.setup("swagger", app, document);
-  await app.listen(process.env.APP_PORT);
+  await app.listen(port, () => {
+    console.log("\nApp is listening on http://localhost:" + port + "\n");
+  });
 }
 
 export async function bootstrapRepl() {

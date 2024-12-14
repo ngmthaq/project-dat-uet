@@ -23,7 +23,7 @@ export class LoggerService extends ConsoleLogger {
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const yyyy = today.getFullYear();
     const date = dd + "-" + mm + "-" + yyyy;
-    const file = resolve(__dirname, `../../logs/log-${date}.log`);
+    const file = resolve(__dirname, `../../../logs/log-${date}.log`);
     const logFormat = format.printf(({ level, message, label, timestamp }) => {
       return `${timestamp} [${label}] ${level.toUpperCase()}: ${message}`;
     });

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ThrottlerModule as AppThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 
 @Module({

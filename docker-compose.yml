@@ -1,9 +1,12 @@
-version: "3"
-
 services:
   nestjs.web:
-    build: .
+    env_file:
+      - .env
+    build:
+      context: "."
+      dockerfile: "Dockerfile.Dev"
+      args:
+        - PORT=${APP_PORT}
     restart: unless-stopped
     ports:
-      - "80:3000"
-      - "443:3000"
+      - "${APP_PORT}:${APP_PORT}"
