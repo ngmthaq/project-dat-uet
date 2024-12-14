@@ -7,6 +7,6 @@ export class UserController {
   @Post()
   @Roles(Role.Admin)
   public assignAdminRole() {
-    return "This method will change the user role to admin";
+    return "TODO: This method will change the user role to admin";
   }
 }
