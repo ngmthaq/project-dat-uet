@@ -10,3 +10,14 @@ services:
     restart: unless-stopped
     ports:
       - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks: 
+      - nestjs-learning-network
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+networks: 
+  nestjs-learning-network: 
+    driver: bridge

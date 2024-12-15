@@ -21,13 +21,13 @@ export class UserSchedule {
    *    seconds
    *
    */
-  @Cron("45 * * * * *")
+  @Cron("0 0 12 * * *")
   public handleCron() {
-    this.loggerService.debug("Called when the current second is 45");
+    this.loggerService.debug("Called when the current hour is 12");
   }
 
-  @Interval(10000) // ms
+  @Interval(1000000) // ms
   public handleInterval() {
-    this.loggerService.debug("Called every 10 seconds");
+    this.loggerService.debug("Called every 1000 seconds");
   }
 }
