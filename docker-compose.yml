@@ -13,11 +13,11 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    networks: 
+    networks:
       - nestjs-learning-network
     environment:
       - CHOKIDAR_USEPOLLING=true
 
-networks: 
-  nestjs-learning-network: 
+networks:
+  nestjs-learning-network:
     driver: bridge
