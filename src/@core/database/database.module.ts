@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "../config/config.module";
+import { DatabaseLogger } from "./database.logger";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ConfigModule } from "../config/config.module";
         database: configService.get<string>("database.database"),
         autoLoadEntities: true,
         synchronize: true,
+        logger: new DatabaseLogger(),
       }),
     }),
   ],

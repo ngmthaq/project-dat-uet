@@ -24,7 +24,6 @@ export async function bootstrap() {
   const document = SwaggerModule.createDocument(app, documentBuilder.build());
   SwaggerModule.setup("swagger", app, document);
   await app.listen(port, () => {
-    console.clear();
     console.log(
       [
         `==============================================================`,
