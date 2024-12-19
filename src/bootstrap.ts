@@ -8,8 +8,8 @@ import { LoggerService } from "./@core/logger/logger.service";
 import { AppModule } from "./app.module";
 
 export async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
   const port = process.env.APP_PORT;
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.use(helmet());
   app.use(cookieParser());
   app.useLogger(app.get(LoggerService));
@@ -24,7 +24,16 @@ export async function bootstrap() {
   const document = SwaggerModule.createDocument(app, documentBuilder.build());
   SwaggerModule.setup("swagger", app, document);
   await app.listen(port, () => {
-    console.log("\nApp is listening on http://localhost:" + port + "\n");
+    console.clear();
+    console.log(
+      [
+        `==============================================================`,
+        `> NestJS Framework`,
+        `> App is listening on http://127.0.0.1:${port}`,
+        `> Swagger is listening on http://127.0.0.1:${port}/swagger`,
+        `==============================================================`,
+      ].join("\n"),
+    );
   });
 }
 

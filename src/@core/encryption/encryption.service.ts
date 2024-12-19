@@ -32,4 +32,9 @@ export class EncryptionService {
     const plainText = Buffer.concat([decryptedText, final]);
     return plainText.toString();
   }
+
+  public async check(plain: string, combined: string) {
+    const encryptedText = await this.decrypt(combined);
+    return plain === encryptedText;
+  }
 }
