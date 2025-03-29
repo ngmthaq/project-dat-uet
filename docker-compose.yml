@@ -1,12 +1,13 @@
 services:
   nestjs.web:
+    platform: linux/arm64
     env_file:
       - .env
     build:
       context: "."
       dockerfile: "Dockerfile"
       args:
-        - PORT=${APP_PORT}
+        - APP_PORT=${APP_PORT}
     restart: unless-stopped
     ports:
       - "${APP_PORT}:${APP_PORT}"
@@ -14,10 +15,50 @@ services:
       - .:/app
       - /app/node_modules
     networks:
-      - nestjs-learning-network
+      - nestjs-dat-uet
     environment:
       - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - nestjs.db
+
+  nestjs.db:
+    platform: linux/arm64
+    image: mysql:8.0.41
+    container_name: mysql_db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USERNAME}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "${DATABASE_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nestjs-dat-uet
+
+  nestjs.adminer:
+    image: adminer:5.0.6
+    platform: linux/arm64
+    container_name: adminer
+    restart: unless-stopped
+    depends_on:
+      - nestjs.db
+    environment:
+      ADMINER_DEFAULT_SERVER: nestjs.db
+    ports:
+      - "${DATABASE_ADMIN_PORT}:8080"
+    networks:
+      - nestjs-dat-uet
 
 networks:
-  nestjs-learning-network:
+  nestjs-dat-uet:
     driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+
