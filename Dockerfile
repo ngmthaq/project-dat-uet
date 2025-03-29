@@ -21,8 +21,5 @@ COPY . .
 # Expose application port
 EXPOSE ${PORT}
 
-# Build the application
-RUN yarn build
-
 # Serve the application
-CMD [ "yarn", "start:prod" ]
+CMD [ "yarn", "start:dev" ]
