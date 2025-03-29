@@ -14,11 +14,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "format": "prettier --write .",
-    "lint": "prettier --check . && eslint \"{src,apps,libs}/**/*.ts\"",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "**/*": "yarn lint"
+    "lint": "prettier --check . && eslint \"{src,apps,libs}/**/*.ts\""
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",
