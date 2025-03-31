@@ -3,8 +3,8 @@ import { ConfigService } from "@nestjs/config";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { UserRepository } from "@/users/providers/user.repository";
 import { EncryptionService } from "@/@core/encryption/encryption.service";
-import { LoginDto } from "../models/login.dto";
-import { AuthUser } from "../models/auth-user.entity";
+import { LoginDto } from "../dto/login.dto";
+import { AuthUser } from "../entities/auth-user.entity";
 
 @Injectable()
 export class AuthService {

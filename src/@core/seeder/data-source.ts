@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { ConfigService } from "@nestjs/config";
-import { User } from "@/users/models/user.entity";
+import { User } from "@/users/entities/user.entity";
 
 export const createDataSource = async (configService: ConfigService): Promise<DataSource> => {
   return new DataSource({

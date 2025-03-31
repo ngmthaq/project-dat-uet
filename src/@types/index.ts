@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { AuthUser } from "@/auth/models/auth-user.entity";
+import { AuthUser } from "@/auth/entities/auth-user.entity";
 
 export type Nullable<T> = T | null;
 

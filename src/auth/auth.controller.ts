@@ -3,7 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthRequest } from "@/@types";
 import { AuthService } from "./providers/auth.service";
 import { SkipAuth } from "./providers/skip-auth.decorator";
-import { LoginDto } from "./models/login.dto";
+import { LoginDto } from "./dto/login.dto";
 
 @Controller("auth")
 @ApiTags("auth")
