@@ -8,9 +8,6 @@ export class Company extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column()
-  public userId: number;
-
   @Column({ type: "varchar" })
   public name: string;
 

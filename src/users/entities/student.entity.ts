@@ -11,12 +11,6 @@ export class Student extends BaseEntity {
   public id: number;
 
   @Column()
-  public userId: number;
-
-  @Column()
-  public majorId: number;
-
-  @Column()
   public teacherId: number;
 
   @Column({ type: "varchar" })
@@ -29,7 +23,7 @@ export class Student extends BaseEntity {
   public address: string;
 
   @Column({ type: "datetime" })
-  public birthday: string;
+  public birthday: Date;
 
   @Column({ type: "varchar" })
   public className: string;

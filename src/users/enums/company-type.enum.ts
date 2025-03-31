@@ -1,4 +1,4 @@
 export enum CompanyType {
-  Partner,
-  External,
+  Partner = "Partner",
+  External = "External",
 }

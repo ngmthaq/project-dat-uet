@@ -8,12 +8,6 @@ export class Teacher extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column()
-  public userId: number;
-
-  @Column()
-  public majorId: number;
-
   @Column({ type: "varchar" })
   public name: string;
 
@@ -24,7 +18,7 @@ export class Teacher extends BaseEntity {
   public address: string;
 
   @Column({ type: "datetime" })
-  public birthday: string;
+  public birthday: Date;
 
   @Column({ type: "varchar" })
   public fax: string;

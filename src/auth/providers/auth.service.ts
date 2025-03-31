@@ -1,8 +1,8 @@
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { UserRepository } from "@/users/providers/user.repository";
 import { EncryptionService } from "@/@core/encryption/encryption.service";
+import { UserService } from "@/users/providers/user.service";
 import { LoginDto } from "../dto/login.dto";
 import { AuthUser } from "../entities/auth-user.entity";
 
@@ -11,12 +11,12 @@ export class AuthService {
   public constructor(
     private configService: ConfigService,
     private jwtService: JwtService,
-    private userRepository: UserRepository,
+    private userService: UserService,
     private encryptionService: EncryptionService,
   ) {}
 
   public async login(loginDto: LoginDto) {
-    const user = await this.userRepository.findByUsername(loginDto.username);
+    const user = await this.userService.findByEmail(loginDto.email);
     if (!user) throw new UnauthorizedException([]);
     const isPasswordCorrect = await this.encryptionService.check(loginDto.password, user.password);
     if (!isPasswordCorrect) throw new UnauthorizedException([]);
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   public async getAuthUser(userId: number) {
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userService.findById(userId);
     if (!user) throw new UnauthorizedException([]);
     return { ...user, password: undefined };
   }

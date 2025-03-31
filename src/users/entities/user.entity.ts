@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "@/@core/models/base.entity";
 import { Nullable } from "@/@types";
 import { Role } from "../enums/role.enum";
@@ -20,12 +20,15 @@ export class User extends BaseEntity {
   @Column({ type: "enum", enum: Role, default: Role.Student })
   public role: Role;
 
-  @OneToOne(() => Student, (student) => student.userId, { cascade: true, nullable: true })
+  @OneToOne(() => Student, { cascade: true, nullable: true })
+  @JoinColumn()
   public student: Nullable<Student>;
 
-  @OneToOne(() => Teacher, (teacher) => teacher.userId, { cascade: true, nullable: true })
+  @OneToOne(() => Teacher, { cascade: true, nullable: true })
+  @JoinColumn()
   public teacher: Nullable<Teacher>;
 
-  @OneToOne(() => Company, (company) => company.userId, { cascade: true, nullable: true })
+  @OneToOne(() => Company, { cascade: true, nullable: true })
+  @JoinColumn()
   public company: Nullable<Company>;
 }

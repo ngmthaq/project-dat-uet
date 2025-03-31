@@ -1,4 +1,4 @@
 export enum StudentReportStatus {
-  InProgress,
-  Submitted,
+  InProgress = "InProgress",
+  Submitted = "Submitted",
 }
