@@ -4,6 +4,8 @@ import { SkipAuth } from "@/auth/providers/skip-auth.decorator";
 import { UserService } from "./providers/user.service";
 import { CreateTeacherDto } from "./dto/create-teacher.dto";
 import { UpdateTeacherDto } from "./dto/update-teacher.dto";
+import { CreateCompanyDto } from "./dto/create-company.dto";
+import { UpdateCompanyDto } from "./dto/update-company.dto";
 
 @Controller("users")
 @ApiTags("users")
@@ -53,5 +55,50 @@ export class UserController {
   @ApiResponse({ status: 404, description: "Teacher not found" })
   public async deleteTeacher(@Param("id") id: number) {
     return this.userService.deleteTeacher(id);
+  }
+
+  @SkipAuth()
+  @Get("companies")
+  @ApiOperation({ summary: "Get all companies" })
+  @ApiResponse({ status: 200, description: "Get companies successfully" })
+  public async getCompanies() {
+    return this.userService.getCompanies();
+  }
+
+  @SkipAuth()
+  @Get("companies/:id")
+  @ApiOperation({ summary: "Get company by id" })
+  @ApiResponse({ status: 200, description: "Get company successfully" })
+  @ApiResponse({ status: 404, description: "Company not found" })
+  public async getCompany(@Param("id") id: number) {
+    return this.userService.getCompany(id);
+  }
+
+  @SkipAuth()
+  @Post("companies")
+  @ApiOperation({ summary: "Create company" })
+  @ApiResponse({ status: 201, description: "Create company successfully" })
+  @ApiResponse({ status: 400, description: "Create company failed" })
+  public async createCompany(@Body() createCompanyDto: CreateCompanyDto) {
+    return this.userService.createCompany(createCompanyDto);
+  }
+
+  @SkipAuth()
+  @Patch("companies/:id")
+  @ApiOperation({ summary: "Update company" })
+  @ApiResponse({ status: 200, description: "Update company successfully" })
+  @ApiResponse({ status: 400, description: "Update company failed" })
+  @ApiResponse({ status: 404, description: "Company not found" })
+  public async updateCompany(@Param("id") id: number, @Body() updateCompanyDto: UpdateCompanyDto) {
+    return this.userService.updateCompany(id, updateCompanyDto);
+  }
+
+  @SkipAuth()
+  @Delete("companies/:id")
+  @ApiOperation({ summary: "Delete company" })
+  @ApiResponse({ status: 200, description: "Delete company successfully" })
+  @ApiResponse({ status: 404, description: "Company not found" })
+  public async deleteCompany(@Param("id") id: number) {
+    return this.userService.deleteCompany(id);
   }
 }

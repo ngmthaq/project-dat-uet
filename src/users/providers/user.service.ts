@@ -2,12 +2,15 @@ import { DataSource, Repository } from "typeorm";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EncryptionService } from "@/@core/encryption/encryption.service";
-import { TEACHER_DEFAULT_PASSWORD } from "../constants/teacher.const";
+import { DEFAULT_PASSWORD } from "../constants/user.const";
 import { Role } from "../enums/role.enum";
 import { User } from "../entities/user.entity";
 import { Teacher } from "../entities/teacher.entity";
+import { Company } from "../entities/company.entity";
 import { CreateTeacherDto } from "../dto/create-teacher.dto";
 import { UpdateTeacherDto } from "../dto/update-teacher.dto";
+import { CreateCompanyDto } from "../dto/create-company.dto";
+import { UpdateCompanyDto } from "../dto/update-company.dto";
 
 @Injectable()
 export class UserService {
@@ -45,7 +48,7 @@ export class UserService {
 
   public async getTeacher(id: number): Promise<User | null> {
     const user = await this.userRepo.findOne({
-      where: { id },
+      where: { id, role: Role.Teacher },
       relations: { teacher: true },
     });
 
@@ -72,7 +75,7 @@ export class UserService {
 
       const user = new User();
       user.email = createTeacherDto.email;
-      user.password = await this.encryptionService.encrypt(TEACHER_DEFAULT_PASSWORD);
+      user.password = await this.encryptionService.encrypt(DEFAULT_PASSWORD);
       user.role = Role.Teacher;
       user.teacher = teacherResult;
       await queryRunner.manager.save(user);
@@ -95,7 +98,7 @@ export class UserService {
 
     try {
       const user = await this.userRepo.findOne({
-        where: { id },
+        where: { id, role: Role.Teacher },
         relations: { teacher: true },
       });
 
@@ -124,11 +127,120 @@ export class UserService {
   public async deleteTeacher(id: number): Promise<boolean> {
     try {
       const user = await this.userRepo.findOne({
-        where: { id },
+        where: { id, role: Role.Teacher },
         relations: { teacher: true },
       });
 
       if (!user) throw new NotFoundException("teacher not found");
+      await this.userRepo.softDelete(id);
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  public async getCompanies(): Promise<User[]> {
+    const users = await this.userRepo.find({
+      where: { role: Role.Company },
+      relations: { company: true },
+    });
+
+    return users.map((user) => {
+      user.password = undefined;
+      return user;
+    });
+  }
+
+  public async getCompany(id: number): Promise<User | null> {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Company },
+      relations: { company: true },
+    });
+
+    if (!user) throw new NotFoundException("company not found");
+    user.password = undefined;
+
+    return user;
+  }
+
+  public async createCompany(createCompanyDto: CreateCompanyDto): Promise<boolean> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const company = new Company();
+      company.name = createCompanyDto.name;
+      company.address = createCompanyDto.address;
+      company.phoneNumber = createCompanyDto.phoneNumber;
+      company.description = createCompanyDto.description;
+      company.type = createCompanyDto.type;
+      company.domain = createCompanyDto.domain;
+      company.website = createCompanyDto.website;
+      await queryRunner.manager.save(company);
+      const companyResult = await queryRunner.manager.save(company);
+
+      const user = new User();
+      user.email = createCompanyDto.email;
+      user.password = await this.encryptionService.encrypt(DEFAULT_PASSWORD);
+      user.role = Role.Company;
+      user.company = companyResult;
+      await queryRunner.manager.save(user);
+      await queryRunner.commitTransaction();
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async updateCompany(id: number, updateCompanyDto: UpdateCompanyDto): Promise<boolean> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = await this.userRepo.findOne({
+        where: { id, role: Role.Company },
+        relations: { company: true },
+      });
+
+      if (!user) throw new NotFoundException("company not found");
+
+      user.company.name = updateCompanyDto.name;
+      user.company.address = updateCompanyDto.address;
+      user.company.phoneNumber = updateCompanyDto.phoneNumber;
+      user.company.description = updateCompanyDto.description;
+      user.company.type = updateCompanyDto.type;
+      user.company.domain = updateCompanyDto.domain;
+      user.company.website = updateCompanyDto.website;
+      await queryRunner.manager.save(user.company);
+      await queryRunner.commitTransaction();
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async deleteCompany(id: number): Promise<boolean> {
+    try {
+      const user = await this.userRepo.findOne({
+        where: { id, role: Role.Company },
+        relations: { company: true },
+      });
+
+      if (!user) throw new NotFoundException("company not found");
       await this.userRepo.softDelete(id);
 
       return true;

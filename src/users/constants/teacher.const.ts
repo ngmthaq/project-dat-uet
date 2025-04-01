@@ -1,1 +1,0 @@
-export const TEACHER_DEFAULT_PASSWORD = "12345678";
