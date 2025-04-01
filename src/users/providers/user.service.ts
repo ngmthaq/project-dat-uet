@@ -2,11 +2,12 @@ import { DataSource, Repository } from "typeorm";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EncryptionService } from "@/@core/encryption/encryption.service";
-import { User } from "../entities/user.entity";
-import { Role } from "../enums/role.enum";
-import { CreateTeacherDto } from "../dto/create-teacher.dto";
 import { TEACHER_DEFAULT_PASSWORD } from "../constants/teacher.const";
+import { Role } from "../enums/role.enum";
+import { User } from "../entities/user.entity";
 import { Teacher } from "../entities/teacher.entity";
+import { CreateTeacherDto } from "../dto/create-teacher.dto";
+import { UpdateTeacherDto } from "../dto/update-teacher.dto";
 
 @Injectable()
 export class UserService {
@@ -75,7 +76,6 @@ export class UserService {
       user.role = Role.Teacher;
       user.teacher = teacherResult;
       await queryRunner.manager.save(user);
-
       await queryRunner.commitTransaction();
 
       return true;
@@ -85,6 +85,56 @@ export class UserService {
       throw error;
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  public async updateTeacher(id: number, updateTeacherDto: UpdateTeacherDto): Promise<boolean> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = await this.userRepo.findOne({
+        where: { id },
+        relations: { teacher: true },
+      });
+
+      if (!user) throw new NotFoundException("teacher not found");
+
+      user.teacher.name = updateTeacherDto.name;
+      user.teacher.address = updateTeacherDto.address;
+      user.teacher.fax = updateTeacherDto.fax;
+      user.teacher.phoneNumber = updateTeacherDto.phoneNumber;
+      user.teacher.birthday = updateTeacherDto.birthday
+        ? new Date(updateTeacherDto.birthday)
+        : user.teacher.birthday;
+      await queryRunner.manager.save(user.teacher);
+      await queryRunner.commitTransaction();
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async deleteTeacher(id: number): Promise<boolean> {
+    try {
+      const user = await this.userRepo.findOne({
+        where: { id },
+        relations: { teacher: true },
+      });
+
+      if (!user) throw new NotFoundException("teacher not found");
+      await this.userRepo.softDelete(id);
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 }

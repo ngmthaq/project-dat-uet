@@ -1,14 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "@/@core/models/base.entity";
+import { Student } from "./student.entity";
 
 @Entity()
 export class StudentCv extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column()
-  public studentId: number;
-
   @Column({ type: "varchar" })
   public cvPath: string;
+
+  @ManyToOne(() => Student, (student) => student.studentCvs)
+  @JoinColumn()
+  public student: Student;
 }

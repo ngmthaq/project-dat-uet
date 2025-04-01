@@ -8,12 +8,6 @@ export class StudentReport extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column()
-  public studentId: number;
-
-  @Column()
-  public jobId: number;
-
   @Column({ type: "varchar", nullable: true })
   public attachmentPath: Nullable<string>;
 

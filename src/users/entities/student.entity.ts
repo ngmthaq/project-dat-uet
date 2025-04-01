@@ -1,9 +1,9 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "@/@core/models/base.entity";
 import { Nullable } from "@/@types";
 import { Gender } from "../enums/gender.enum";
-import { StudentCv } from "./student-cv.entity";
 import { StudentReport } from "./student-report.entity";
+import { StudentCv } from "./student-cv.entity";
 
 @Entity()
 export class Student extends BaseEntity {
@@ -34,9 +34,11 @@ export class Student extends BaseEntity {
   @Column({ type: "varchar", nullable: true })
   public avatarPath: Nullable<string>;
 
-  @OneToMany(() => StudentCv, (cv) => cv.studentId, { cascade: true, nullable: true })
-  public studentCvs: StudentCv[];
-
-  @OneToOne(() => StudentReport, (report) => report.studentId, { cascade: true, nullable: true })
+  @OneToOne(() => StudentReport, { cascade: true, nullable: true })
+  @JoinColumn()
   public studentReport: Nullable<StudentReport>;
+
+  @OneToMany("StudentCv", (studentCv: StudentCv) => studentCv.student)
+  @JoinColumn()
+  public studentCvs: StudentCv[];
 }
