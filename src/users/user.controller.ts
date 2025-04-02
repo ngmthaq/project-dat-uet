@@ -1,5 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SkipAuth } from "@/auth/providers/skip-auth.decorator";
 import { UserService } from "./providers/user.service";
 import { CreateTeacherDto } from "./dto/create-teacher.dto";
@@ -31,11 +42,16 @@ export class UserController {
 
   @SkipAuth()
   @Post("teachers")
+  @UseInterceptors(FileInterceptor("avatar"))
+  @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Create teacher" })
   @ApiResponse({ status: 201, description: "Create teacher successfully" })
   @ApiResponse({ status: 400, description: "Create teacher failed" })
-  public async createTeacher(@Body() createTeacherDto: CreateTeacherDto) {
-    return this.userService.createTeacher(createTeacherDto);
+  public async createTeacher(
+    @Body() createTeacherDto: CreateTeacherDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.userService.createTeacher(createTeacherDto, avatar);
   }
 
   @SkipAuth()
@@ -76,11 +92,16 @@ export class UserController {
 
   @SkipAuth()
   @Post("companies")
+  @UseInterceptors(FileInterceptor("avatar"))
+  @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Create company" })
   @ApiResponse({ status: 201, description: "Create company successfully" })
   @ApiResponse({ status: 400, description: "Create company failed" })
-  public async createCompany(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.userService.createCompany(createCompanyDto);
+  public async createCompany(
+    @Body() createCompanyDto: CreateCompanyDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.userService.createCompany(createCompanyDto, avatar);
   }
 
   @SkipAuth()

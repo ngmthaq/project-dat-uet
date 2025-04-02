@@ -58,7 +58,10 @@ export class UserService {
     return user;
   }
 
-  public async createTeacher(createTeacherDto: CreateTeacherDto): Promise<boolean> {
+  public async createTeacher(
+    createTeacherDto: CreateTeacherDto,
+    avatar?: Express.Multer.File,
+  ): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -70,6 +73,7 @@ export class UserService {
       teacher.birthday = new Date(createTeacherDto.birthday);
       teacher.fax = createTeacherDto.fax;
       teacher.phoneNumber = createTeacherDto.phoneNumber;
+      if (avatar) teacher.avatarPath = avatar.path;
       await queryRunner.manager.save(teacher);
       const teacherResult = await queryRunner.manager.save(teacher);
 
@@ -165,7 +169,10 @@ export class UserService {
     return user;
   }
 
-  public async createCompany(createCompanyDto: CreateCompanyDto): Promise<boolean> {
+  public async createCompany(
+    createCompanyDto: CreateCompanyDto,
+    avatar: Express.Multer.File,
+  ): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -179,6 +186,7 @@ export class UserService {
       company.type = createCompanyDto.type;
       company.domain = createCompanyDto.domain;
       company.website = createCompanyDto.website;
+      if (avatar) company.logoPath = avatar.path;
       await queryRunner.manager.save(company);
       const companyResult = await queryRunner.manager.save(company);
 

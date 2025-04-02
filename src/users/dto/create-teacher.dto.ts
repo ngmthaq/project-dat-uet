@@ -48,4 +48,8 @@ export class CreateTeacherDto {
   @IsString()
   @ApiProperty({ example: "0987654321" })
   public phoneNumber: string;
+
+  @IsOptional()
+  @ApiProperty({ type: "string", format: "binary", required: false })
+  public avatar?: Express.Multer.File;
 }

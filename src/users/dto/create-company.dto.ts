@@ -1,5 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsEnum, IsNotEmpty, IsString, IsUrl, Validate } from "class-validator";
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Validate,
+} from "class-validator";
 import { CompanyType } from "../enums/company-type.enum";
 import { EmailExistedRule } from "../providers/email-exited.rule";
 
@@ -46,4 +54,8 @@ export class CreateCompanyDto {
   @IsUrl()
   @ApiProperty({ example: "https://bglobal.vn" })
   public website: string;
+
+  @IsOptional()
+  @ApiProperty({ type: "string", format: "binary", required: false })
+  public avatar?: Express.Multer.File;
 }
