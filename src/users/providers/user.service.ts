@@ -1,3 +1,4 @@
+import fs from "node:fs/promises";
 import { DataSource, Repository } from "typeorm";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -95,7 +96,11 @@ export class UserService {
     }
   }
 
-  public async updateTeacher(id: number, updateTeacherDto: UpdateTeacherDto): Promise<boolean> {
+  public async updateTeacher(
+    id: number,
+    updateTeacherDto: UpdateTeacherDto,
+    avatar: Express.Multer.File,
+  ): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -108,6 +113,8 @@ export class UserService {
 
       if (!user) throw new NotFoundException("teacher not found");
 
+      if (user.teacher.avatarPath) await fs.unlink(user.teacher.avatarPath);
+      if (avatar) user.teacher.avatarPath = avatar.path;
       user.teacher.name = updateTeacherDto.name;
       user.teacher.address = updateTeacherDto.address;
       user.teacher.fax = updateTeacherDto.fax;
@@ -115,6 +122,7 @@ export class UserService {
       user.teacher.birthday = updateTeacherDto.birthday
         ? new Date(updateTeacherDto.birthday)
         : user.teacher.birthday;
+
       await queryRunner.manager.save(user.teacher);
       await queryRunner.commitTransaction();
 
@@ -208,7 +216,11 @@ export class UserService {
     }
   }
 
-  public async updateCompany(id: number, updateCompanyDto: UpdateCompanyDto): Promise<boolean> {
+  public async updateCompany(
+    id: number,
+    updateCompanyDto: UpdateCompanyDto,
+    avatar?: Express.Multer.File,
+  ): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -221,6 +233,8 @@ export class UserService {
 
       if (!user) throw new NotFoundException("company not found");
 
+      if (user.company.logoPath) await fs.unlink(user.company.logoPath);
+      if (avatar) user.company.logoPath = avatar.path;
       user.company.name = updateCompanyDto.name;
       user.company.address = updateCompanyDto.address;
       user.company.phoneNumber = updateCompanyDto.phoneNumber;
@@ -228,6 +242,7 @@ export class UserService {
       user.company.type = updateCompanyDto.type;
       user.company.domain = updateCompanyDto.domain;
       user.company.website = updateCompanyDto.website;
+
       await queryRunner.manager.save(user.company);
       await queryRunner.commitTransaction();
 

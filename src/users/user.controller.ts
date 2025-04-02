@@ -56,12 +56,18 @@ export class UserController {
 
   @SkipAuth()
   @Patch("teachers/:id")
+  @UseInterceptors(FileInterceptor("avatar"))
+  @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Update teacher" })
   @ApiResponse({ status: 200, description: "Update teacher successfully" })
   @ApiResponse({ status: 400, description: "Update teacher failed" })
   @ApiResponse({ status: 404, description: "Teacher not found" })
-  public async updateTeacher(@Param("id") id: number, @Body() updateTeacherDto: UpdateTeacherDto) {
-    return this.userService.updateTeacher(id, updateTeacherDto);
+  public async updateTeacher(
+    @Param("id") id: number,
+    @Body() updateTeacherDto: UpdateTeacherDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.userService.updateTeacher(id, updateTeacherDto, avatar);
   }
 
   @SkipAuth()
@@ -106,12 +112,18 @@ export class UserController {
 
   @SkipAuth()
   @Patch("companies/:id")
+  @UseInterceptors(FileInterceptor("avatar"))
+  @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Update company" })
   @ApiResponse({ status: 200, description: "Update company successfully" })
   @ApiResponse({ status: 400, description: "Update company failed" })
   @ApiResponse({ status: 404, description: "Company not found" })
-  public async updateCompany(@Param("id") id: number, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.userService.updateCompany(id, updateCompanyDto);
+  public async updateCompany(
+    @Param("id") id: number,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.userService.updateCompany(id, updateCompanyDto, avatar);
   }
 
   @SkipAuth()
