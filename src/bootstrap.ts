@@ -21,6 +21,7 @@ export async function bootstrap() {
   const documentBuilder = new DocumentBuilder();
   documentBuilder.setTitle("Nest.js");
   documentBuilder.setDescription("The API Description");
+  documentBuilder.addBearerAuth();
   const document = SwaggerModule.createDocument(app, documentBuilder.build());
   SwaggerModule.setup("swagger", app, document);
   await app.listen(port, () => {

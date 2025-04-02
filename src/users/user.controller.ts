@@ -11,7 +11,6 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { SkipAuth } from "@/auth/providers/skip-auth.decorator";
 import { UserService } from "./providers/user.service";
 import { CreateTeacherDto } from "./dto/create-teacher.dto";
 import { UpdateTeacherDto } from "./dto/update-teacher.dto";
@@ -25,7 +24,6 @@ import { UpdateStudentDto } from "./dto/update-student.dto";
 export class UserController {
   public constructor(private userService: UserService) {}
 
-  @SkipAuth()
   @Get("teachers")
   @ApiOperation({ summary: "Get all teachers" })
   @ApiResponse({ status: 200, description: "Get teachers successfully" })
@@ -33,7 +31,6 @@ export class UserController {
     return this.userService.getTeachers();
   }
 
-  @SkipAuth()
   @Get("teachers/:id")
   @ApiOperation({ summary: "Get teacher by id" })
   @ApiResponse({ status: 200, description: "Get teacher successfully" })
@@ -42,7 +39,6 @@ export class UserController {
     return this.userService.getTeacher(id);
   }
 
-  @SkipAuth()
   @Post("teachers")
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
@@ -56,7 +52,6 @@ export class UserController {
     return this.userService.createTeacher(createTeacherDto, avatar);
   }
 
-  @SkipAuth()
   @Patch("teachers/:id")
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
@@ -72,7 +67,6 @@ export class UserController {
     return this.userService.updateTeacher(id, updateTeacherDto, avatar);
   }
 
-  @SkipAuth()
   @Delete("teachers/:id")
   @ApiOperation({ summary: "Delete teacher" })
   @ApiResponse({ status: 200, description: "Delete teacher successfully" })
@@ -81,7 +75,6 @@ export class UserController {
     return this.userService.deleteTeacher(id);
   }
 
-  @SkipAuth()
   @Get("companies")
   @ApiOperation({ summary: "Get all companies" })
   @ApiResponse({ status: 200, description: "Get companies successfully" })
@@ -89,7 +82,6 @@ export class UserController {
     return this.userService.getCompanies();
   }
 
-  @SkipAuth()
   @Get("companies/:id")
   @ApiOperation({ summary: "Get company by id" })
   @ApiResponse({ status: 200, description: "Get company successfully" })
@@ -98,7 +90,6 @@ export class UserController {
     return this.userService.getCompany(id);
   }
 
-  @SkipAuth()
   @Post("companies")
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
@@ -112,7 +103,6 @@ export class UserController {
     return this.userService.createCompany(createCompanyDto, avatar);
   }
 
-  @SkipAuth()
   @Patch("companies/:id")
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
@@ -128,7 +118,6 @@ export class UserController {
     return this.userService.updateCompany(id, updateCompanyDto, avatar);
   }
 
-  @SkipAuth()
   @Delete("companies/:id")
   @ApiOperation({ summary: "Delete company" })
   @ApiResponse({ status: 200, description: "Delete company successfully" })
@@ -137,7 +126,6 @@ export class UserController {
     return this.userService.deleteCompany(id);
   }
 
-  @SkipAuth()
   @Get("students")
   @ApiOperation({ summary: "Get all students" })
   @ApiResponse({ status: 200, description: "Get students successfully" })
@@ -145,7 +133,6 @@ export class UserController {
     return this.userService.getStudents();
   }
 
-  @SkipAuth()
   @Get("students/:id")
   @ApiOperation({ summary: "Get student by id" })
   @ApiResponse({ status: 200, description: "Get student successfully" })
@@ -154,7 +141,6 @@ export class UserController {
     return this.userService.getStudent(id);
   }
 
-  @SkipAuth()
   @Post("students")
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
@@ -168,7 +154,6 @@ export class UserController {
     return this.userService.createStudent(createStudentDto, avatar);
   }
 
-  @SkipAuth()
   @Patch("students/:id")
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
@@ -184,7 +169,6 @@ export class UserController {
     return this.userService.updateStudent(id, updateStudentDto, avatar);
   }
 
-  @SkipAuth()
   @Delete("students/:id")
   @ApiOperation({ summary: "Delete student" })
   @ApiResponse({ status: 200, description: "Delete student successfully" })
