@@ -3,8 +3,10 @@ import { ConfigService } from "@nestjs/config";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { EncryptionService } from "@/@core/encryption/encryption.service";
 import { UserService } from "@/users/providers/user.service";
-import { LoginDto } from "../dto/login.dto";
+import { User } from "@/users/entities/user.entity";
 import { AuthUser } from "../entities/auth-user.entity";
+import { LoginDto } from "../dto/login.dto";
+import { ChangePasswordDto } from "../dto/change-password.dto";
 
 @Injectable()
 export class AuthService {
@@ -22,6 +24,7 @@ export class AuthService {
     if (!isPasswordCorrect) throw new UnauthorizedException([]);
     const payload: AuthUser = { ...user, password: undefined };
     const accessToken = await this.jwtService.signAsync(payload);
+
     return {
       accessToken: accessToken,
       expiredIn: this.configService.get<number>("auth.expiresIn") + "s",
@@ -32,6 +35,15 @@ export class AuthService {
   public async getAuthUser(userId: number) {
     const user = await this.userService.findById(userId);
     if (!user) throw new UnauthorizedException([]);
+
     return { ...user, password: undefined };
+  }
+
+  public async changePassword(authUser: User, changePasswordDto: ChangePasswordDto) {
+    return this.userService.changePassword(
+      authUser.id,
+      changePasswordDto.password,
+      changePasswordDto.newPassword,
+    );
   }
 }

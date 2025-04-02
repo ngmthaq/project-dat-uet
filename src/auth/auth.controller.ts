@@ -4,6 +4,7 @@ import { AuthRequest } from "@/@types";
 import { AuthService } from "./providers/auth.service";
 import { SkipAuth } from "./providers/skip-auth.decorator";
 import { LoginDto } from "./dto/login.dto";
+import { ChangePasswordDto } from "./dto/change-password.dto";
 
 @Controller("auth")
 @ApiTags("auth")
@@ -26,5 +27,14 @@ export class AuthController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: "Unauthorize" })
   public getAuthUser(@Req() req: AuthRequest) {
     return this.authService.getAuthUser(req.user.id);
+  }
+
+  @Post("password/change")
+  @ApiOperation({ summary: "Change password" })
+  @ApiResponse({ status: HttpStatus.OK, description: "Change password success" })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Old password incorrect" })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: "Unauthorize" })
+  public changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: AuthRequest) {
+    return this.authService.changePassword(req.user, changePasswordDto);
   }
 }

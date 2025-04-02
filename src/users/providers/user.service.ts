@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import { DataSource, Repository } from "typeorm";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EncryptionService } from "@/@core/encryption/encryption.service";
 import { DEFAULT_PASSWORD } from "../constants/user.const";
@@ -28,6 +28,11 @@ export class UserService {
     return this.userRepo.findOne({
       where: { id },
       withDeleted,
+      relations: {
+        teacher: true,
+        company: true,
+        student: { studentCvs: true, studentReport: true },
+      },
     });
   }
 
@@ -35,6 +40,11 @@ export class UserService {
     return this.userRepo.findOne({
       where: { email },
       withDeleted,
+      relations: {
+        teacher: true,
+        company: true,
+        student: { studentCvs: true, studentReport: true },
+      },
     });
   }
 
@@ -394,6 +404,22 @@ export class UserService {
 
       if (!user) throw new NotFoundException("student not found");
       await this.userRepo.softDelete(id);
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  public async changePassword(id: number, password: string, newPassword: string) {
+    try {
+      const user = await this.findById(id);
+      const isPasswordCorrect = this.encryptionService.check(password, user.password);
+      if (!isPasswordCorrect) throw new BadRequestException("old password is incorrect");
+
+      const encryptedPassword = await this.encryptionService.encrypt(newPassword);
+      await this.userRepo.update({ id }, { password: encryptedPassword });
 
       return true;
     } catch (error) {
