@@ -17,6 +17,8 @@ import { CreateTeacherDto } from "./dto/create-teacher.dto";
 import { UpdateTeacherDto } from "./dto/update-teacher.dto";
 import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
+import { CreateStudentDto } from "./dto/create-student.dto";
+import { UpdateStudentDto } from "./dto/update-student.dto";
 
 @Controller("users")
 @ApiTags("users")
@@ -133,5 +135,61 @@ export class UserController {
   @ApiResponse({ status: 404, description: "Company not found" })
   public async deleteCompany(@Param("id") id: number) {
     return this.userService.deleteCompany(id);
+  }
+
+  @SkipAuth()
+  @Get("students")
+  @ApiOperation({ summary: "Get all students" })
+  @ApiResponse({ status: 200, description: "Get students successfully" })
+  public async getStudents() {
+    return this.userService.getStudents();
+  }
+
+  @SkipAuth()
+  @Get("students/:id")
+  @ApiOperation({ summary: "Get student by id" })
+  @ApiResponse({ status: 200, description: "Get student successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  public async getStudent(@Param("id") id: number) {
+    return this.userService.getStudent(id);
+  }
+
+  @SkipAuth()
+  @Post("students")
+  @UseInterceptors(FileInterceptor("avatar"))
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({ summary: "Create student" })
+  @ApiResponse({ status: 201, description: "Create student successfully" })
+  @ApiResponse({ status: 400, description: "Create student failed" })
+  public async createStudent(
+    @Body() createStudentDto: CreateStudentDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.userService.createStudent(createStudentDto, avatar);
+  }
+
+  @SkipAuth()
+  @Patch("students/:id")
+  @UseInterceptors(FileInterceptor("avatar"))
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({ summary: "Update student" })
+  @ApiResponse({ status: 200, description: "Update student successfully" })
+  @ApiResponse({ status: 400, description: "Update student failed" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  public async updateStudent(
+    @Param("id") id: number,
+    @Body() updateStudentDto: UpdateStudentDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.userService.updateStudent(id, updateStudentDto, avatar);
+  }
+
+  @SkipAuth()
+  @Delete("students/:id")
+  @ApiOperation({ summary: "Delete student" })
+  @ApiResponse({ status: 200, description: "Delete student successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  public async deleteStudent(@Param("id") id: number) {
+    return this.userService.deleteStudent(id);
   }
 }

@@ -8,10 +8,13 @@ import { Role } from "../enums/role.enum";
 import { User } from "../entities/user.entity";
 import { Teacher } from "../entities/teacher.entity";
 import { Company } from "../entities/company.entity";
+import { Student } from "../entities/student.entity";
 import { CreateTeacherDto } from "../dto/create-teacher.dto";
 import { UpdateTeacherDto } from "../dto/update-teacher.dto";
 import { CreateCompanyDto } from "../dto/create-company.dto";
 import { UpdateCompanyDto } from "../dto/update-company.dto";
+import { CreateStudentDto } from "../dto/create-student.dto";
+import { UpdateStudentDto } from "../dto/update-student.dto";
 
 @Injectable()
 export class UserService {
@@ -90,6 +93,7 @@ export class UserService {
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction();
+      if (avatar) await fs.unlink(avatar.path);
       throw error;
     } finally {
       await queryRunner.release();
@@ -130,6 +134,7 @@ export class UserService {
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction();
+      if (avatar) await fs.unlink(avatar.path);
       throw error;
     } finally {
       await queryRunner.release();
@@ -210,6 +215,7 @@ export class UserService {
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction();
+      if (avatar) await fs.unlink(avatar.path);
       throw error;
     } finally {
       await queryRunner.release();
@@ -250,6 +256,7 @@ export class UserService {
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction();
+      if (avatar) await fs.unlink(avatar.path);
       throw error;
     } finally {
       await queryRunner.release();
@@ -264,6 +271,128 @@ export class UserService {
       });
 
       if (!user) throw new NotFoundException("company not found");
+      await this.userRepo.softDelete(id);
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  public async getStudents(): Promise<User[]> {
+    const users = await this.userRepo.find({
+      where: { role: Role.Student },
+      relations: { student: { studentCvs: true, studentReport: true } },
+    });
+
+    return users.map((user) => {
+      user.password = undefined;
+      return user;
+    });
+  }
+
+  public async getStudent(id: number): Promise<User | null> {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+      relations: { student: { studentCvs: true, studentReport: true } },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+    user.password = undefined;
+
+    return user;
+  }
+
+  public async createStudent(
+    createStudentDto: CreateStudentDto,
+    avatar?: Express.Multer.File,
+  ): Promise<boolean> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const student = new Student();
+      student.name = createStudentDto.name;
+      student.address = createStudentDto.address;
+      student.birthday = new Date(createStudentDto.birthday);
+      student.className = createStudentDto.className;
+      student.phoneNumber = createStudentDto.phoneNumber;
+      student.teacherId = createStudentDto.teacherId;
+      if (avatar) student.avatarPath = avatar.path;
+      await queryRunner.manager.save(student);
+      const studentResult = await queryRunner.manager.save(student);
+
+      const user = new User();
+      user.email = createStudentDto.email;
+      user.password = await this.encryptionService.encrypt(DEFAULT_PASSWORD);
+      user.role = Role.Student;
+      user.student = studentResult;
+      await queryRunner.manager.save(user);
+      await queryRunner.commitTransaction();
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      if (avatar) await fs.unlink(avatar.path);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async updateStudent(
+    id: number,
+    updateStudentDto: UpdateStudentDto,
+    avatar: Express.Multer.File,
+  ): Promise<boolean> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = await this.userRepo.findOne({
+        where: { id, role: Role.Student },
+        relations: { student: true },
+      });
+
+      if (!user) throw new NotFoundException("student not found");
+
+      if (user.student.avatarPath) await fs.unlink(user.student.avatarPath);
+      if (avatar) user.student.avatarPath = avatar.path;
+      user.student.name = updateStudentDto.name;
+      user.student.address = updateStudentDto.address;
+      user.student.className = updateStudentDto.className;
+      user.student.phoneNumber = updateStudentDto.phoneNumber;
+      user.student.teacherId = updateStudentDto.teacherId;
+      user.student.birthday = updateStudentDto.birthday
+        ? new Date(updateStudentDto.birthday)
+        : user.student.birthday;
+
+      await queryRunner.manager.save(user.student);
+      await queryRunner.commitTransaction();
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      if (avatar) await fs.unlink(avatar.path);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async deleteStudent(id: number): Promise<boolean> {
+    try {
+      const user = await this.userRepo.findOne({
+        where: { id, role: Role.Student },
+        relations: { student: true },
+      });
+
+      if (!user) throw new NotFoundException("student not found");
       await this.userRepo.softDelete(id);
 
       return true;
