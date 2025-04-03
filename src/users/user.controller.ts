@@ -176,4 +176,40 @@ export class UserController {
   public async deleteStudent(@Param("id") id: number) {
     return this.userService.deleteStudent(id);
   }
+
+  @Get("students/:id/cvs")
+  @ApiOperation({ summary: "Get all student CVs" })
+  @ApiResponse({ status: 200, description: "Get student CVs successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  public async getStudentCVs(@Param("id") id: number) {
+    return this.userService.getStudentCVs(id);
+  }
+
+  @Get("students/:id/cvs/:cvId")
+  @ApiOperation({ summary: "Get student CV by id" })
+  @ApiResponse({ status: 200, description: "Get student CV successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  @ApiResponse({ status: 404, description: "Student CV not found" })
+  public async getStudentCV(@Param("id") id: number, @Param("cvId") cvId: number) {
+    return this.userService.getStudentCV(id, cvId);
+  }
+
+  @Post("students/:id/cvs")
+  @UseInterceptors(FileInterceptor("cv"))
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({ summary: "Upload student CV" })
+  @ApiResponse({ status: 200, description: "Upload CV successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  @ApiResponse({ status: 400, description: "Upload CV failed" })
+  public async uploadStudentCV(@Param("id") id: number, @UploadedFile() cv: Express.Multer.File) {
+    return this.userService.uploadStudentCV(id, cv);
+  }
+
+  @Delete("students/:id/cvs/:cvId")
+  @ApiOperation({ summary: "Delete student CV" })
+  @ApiResponse({ status: 200, description: "Delete student CV successfully" })
+  @ApiResponse({ status: 404, description: "Student CV not found" })
+  public async deleteStudentCV(@Param("id") id: number, @Param("cvId") cvId: number) {
+    return this.userService.deleteStudentCV(id, cvId);
+  }
 }

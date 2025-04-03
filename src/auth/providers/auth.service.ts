@@ -46,4 +46,20 @@ export class AuthService {
       changePasswordDto.newPassword,
     );
   }
+
+  public async getStudentCVs(id: number) {
+    return this.userService.getStudentCVs(id);
+  }
+
+  public async getStudentCV(id: number, cvId: number) {
+    return this.userService.getStudentCV(id, cvId);
+  }
+
+  public async uploadStudentCV(id: number, cvFile: Express.Multer.File) {
+    return this.userService.uploadStudentCV(id, cvFile);
+  }
+
+  public async deleteStudentCV(id: number, cvId: number) {
+    return this.userService.deleteStudentCV(id, cvId);
+  }
 }

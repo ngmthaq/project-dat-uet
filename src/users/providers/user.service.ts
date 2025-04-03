@@ -15,11 +15,13 @@ import { CreateCompanyDto } from "../dto/create-company.dto";
 import { UpdateCompanyDto } from "../dto/update-company.dto";
 import { CreateStudentDto } from "../dto/create-student.dto";
 import { UpdateStudentDto } from "../dto/update-student.dto";
+import { StudentCv } from "../entities/student-cv.entity";
 
 @Injectable()
 export class UserService {
   public constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(StudentCv) private cvRepo: Repository<StudentCv>,
     private encryptionService: EncryptionService,
     private dataSource: DataSource,
   ) {}
@@ -426,5 +428,60 @@ export class UserService {
       console.error(error);
       throw error;
     }
+  }
+
+  public async getStudentCVs(id: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+
+    return user.student.studentCvs;
+  }
+
+  public async getStudentCV(id: number, cvId: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+
+    const cv = user.student.studentCvs.find((cv) => cv.id === cvId);
+    if (!cv) throw new NotFoundException("cv not found");
+
+    return cv;
+  }
+
+  public async uploadStudentCV(id: number, cvFile: Express.Multer.File) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+      relations: { student: true },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+
+    const cv = new StudentCv();
+    cv.cvPath = cvFile.path;
+    cv.student = user.student;
+    await this.cvRepo.save(cv);
+
+    return true;
+  }
+
+  public async deleteStudentCV(id: number, cvId: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+      relations: { student: { studentCvs: true } },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+
+    const cv = user.student.studentCvs.find((cv) => cv.id === cvId);
+    if (!cv) throw new NotFoundException("cv not found");
+
+    await this.cvRepo.remove(cv);
+
+    return true;
   }
 }
