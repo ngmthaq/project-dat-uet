@@ -433,6 +433,7 @@ export class UserService {
   public async getStudentCVs(id: number) {
     const user = await this.userRepo.findOne({
       where: { id, role: Role.Student },
+      relations: { student: { studentCvs: true } },
     });
 
     if (!user) throw new NotFoundException("student not found");
@@ -443,6 +444,7 @@ export class UserService {
   public async getStudentCV(id: number, cvId: number) {
     const user = await this.userRepo.findOne({
       where: { id, role: Role.Student },
+      relations: { student: { studentCvs: true } },
     });
 
     if (!user) throw new NotFoundException("student not found");
@@ -481,6 +483,7 @@ export class UserService {
     if (!cv) throw new NotFoundException("cv not found");
 
     await this.cvRepo.remove(cv);
+    await fs.unlink(cv.cvPath);
 
     return true;
   }

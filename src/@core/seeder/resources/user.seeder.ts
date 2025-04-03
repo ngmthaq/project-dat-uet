@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { EncryptionService } from "@/@core/encryption/encryption.service";
-import { User } from "@/users/entities/user.entity";
+import { User } from "@/user/entities/user.entity";
 // import { Gender } from "@/users/enums/gender.enum";
 // import { Role } from "@/users/enums/role.enum";
 

@@ -11,13 +11,13 @@ import {
   UploadedFile,
   Delete,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthRequest } from "@/@types";
 import { AuthService } from "./providers/auth.service";
 import { SkipAuth } from "./providers/skip-auth.decorator";
 import { LoginDto } from "./dto/login.dto";
 import { ChangePasswordDto } from "./dto/change-password.dto";
-import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("auth")
 @ApiTags("auth")
