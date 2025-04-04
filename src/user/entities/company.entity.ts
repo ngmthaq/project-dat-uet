@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "@/@core/models/base.entity";
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Nullable } from "@/@types";
+import { BaseEntity } from "@/@core/models/base.entity";
+import { Job } from "@/job/entities/job.entity";
 import { CompanyType } from "../enums/company-type.enum";
 
 @Entity()
@@ -31,4 +32,8 @@ export class Company extends BaseEntity {
 
   @Column({ type: "varchar", nullable: true })
   public logoPath: Nullable<string>;
+
+  @OneToMany("Job", (job: Job) => job.company)
+  @JoinColumn()
+  public jobs: Job[];
 }

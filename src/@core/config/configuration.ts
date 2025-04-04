@@ -3,6 +3,7 @@ export default () => ({
   algorithm: process.env.APP_ALGORITHM || "aes-256-ctr",
   auth: {
     expiresIn: parseInt(process.env.APP_AUTH_EXPIRES_IN, 10) || 604800,
+    enable: process.env.APP_ENABLE_AUTH === "true",
   },
   throttler: {
     ttl: parseInt(process.env.APP_THROTTLER_TTL, 10) || 30000,

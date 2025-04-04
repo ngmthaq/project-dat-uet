@@ -90,6 +90,14 @@ export class UserController {
     return this.userService.getCompany(id);
   }
 
+  @Get("companies/:id/jobs")
+  @ApiOperation({ summary: "Get company jobs" })
+  @ApiResponse({ status: 200, description: "Get company jobs successfully" })
+  @ApiResponse({ status: 404, description: "Company not found" })
+  public async getCompanyJobs(@Param("id") id: number) {
+    return this.userService.getCompanyJobs(id);
+  }
+
   @Post("companies")
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")

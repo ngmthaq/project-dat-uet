@@ -194,6 +194,18 @@ export class UserService {
     return user;
   }
 
+  public async getCompanyJobs(id: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Company },
+      relations: { company: { jobs: true } },
+    });
+
+    if (!user) throw new NotFoundException("company not found");
+    user.password = undefined;
+
+    return user?.company?.jobs || [];
+  }
+
   public async createCompany(
     createCompanyDto: CreateCompanyDto,
     avatar: Express.Multer.File,
@@ -438,7 +450,7 @@ export class UserService {
 
     if (!user) throw new NotFoundException("student not found");
 
-    return user.student.studentCvs;
+    return user?.student?.studentCvs || [];
   }
 
   public async getStudentCV(id: number, cvId: number) {
