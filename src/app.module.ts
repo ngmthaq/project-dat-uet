@@ -3,8 +3,9 @@ import { CoreModule } from "./@core/core.module";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { JobModule } from "./job/job.module";
+import { MajorModule } from "./major/major.module";
 
 @Module({
-  imports: [CoreModule, AuthModule, UserModule, JobModule],
+  imports: [CoreModule, AuthModule, UserModule, JobModule, MajorModule],
 })
 export class AppModule {}
