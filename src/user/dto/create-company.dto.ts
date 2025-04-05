@@ -9,7 +9,7 @@ import {
   Validate,
 } from "class-validator";
 import { CompanyType } from "../enums/company-type.enum";
-import { EmailExistedRule } from "../providers/email-exited.rule";
+import { EmailExistedRule } from "../providers/email-existed.rule";
 
 export class CreateCompanyDto {
   @IsNotEmpty()

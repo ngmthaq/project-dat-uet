@@ -1,12 +1,14 @@
 import { Module } from "@nestjs/common";
-import { MajorService } from "./providers/major.service";
-import { MajorController } from "./major.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { MajorController } from "./major.controller";
 import { Major } from "./entities/major.entity";
+import { Semester } from "./entities/semester.entity";
+import { MajorService } from "./providers/major.service";
+import { MajorExistRule } from "./providers/major-exist.rule";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Major])],
+  imports: [TypeOrmModule.forFeature([Major, Semester])],
   controllers: [MajorController],
-  providers: [MajorService],
+  providers: [MajorService, MajorExistRule],
 })
 export class MajorModule {}

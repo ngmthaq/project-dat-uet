@@ -9,7 +9,7 @@ import {
   Validate,
 } from "class-validator";
 import { Gender } from "../enums/gender.enum";
-import { EmailExistedRule } from "../providers/email-exited.rule";
+import { EmailExistedRule } from "../providers/email-existed.rule";
 
 export class CreateStudentDto {
   @IsNotEmpty()

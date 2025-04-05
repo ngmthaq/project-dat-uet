@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "@/@core/models/base.entity";
+import { Semester } from "./semester.entity";
 
 @Entity()
 export class Major extends BaseEntity {
@@ -32,4 +33,8 @@ export class Major extends BaseEntity {
 
   @Column({ type: "text" })
   public higherEducation: string;
+
+  @OneToMany("Semester", (semester: Semester) => semester.major)
+  @JoinColumn()
+  public semesters: Semester[];
 }
