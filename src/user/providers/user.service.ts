@@ -31,7 +31,7 @@ export class UserService {
       where: { id },
       withDeleted,
       relations: {
-        teacher: true,
+        teacher: { subjects: true },
         company: true,
         student: { studentCvs: true, studentReport: true },
       },
@@ -43,7 +43,7 @@ export class UserService {
       where: { email },
       withDeleted,
       relations: {
-        teacher: true,
+        teacher: { subjects: true },
         company: true,
         student: { studentCvs: true, studentReport: true },
       },
@@ -53,7 +53,7 @@ export class UserService {
   public async getTeachers(): Promise<User[]> {
     const users = await this.userRepo.find({
       where: { role: Role.Teacher },
-      relations: { teacher: true },
+      relations: { teacher: { subjects: true } },
     });
 
     return users.map((user) => {
@@ -65,7 +65,7 @@ export class UserService {
   public async getTeacher(id: number): Promise<User | null> {
     const user = await this.userRepo.findOne({
       where: { id, role: Role.Teacher },
-      relations: { teacher: true },
+      relations: { teacher: { subjects: true } },
     });
 
     if (!user) throw new NotFoundException("teacher not found");
@@ -168,6 +168,46 @@ export class UserService {
       console.error(error);
       throw error;
     }
+  }
+
+  public async getTeacherSubjects(id: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Teacher },
+      relations: { teacher: { subjects: true } },
+    });
+
+    if (!user) throw new NotFoundException("teacher not found");
+    user.password = undefined;
+
+    return user?.teacher?.subjects || [];
+  }
+
+  public async addSubjectToTeacher(id: number, subjectId: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Teacher },
+      relations: { teacher: { subjects: true } },
+    });
+    if (!user) throw new NotFoundException("teacher not found");
+    const subject = user.teacher.subjects.find((subject) => subject.id === subjectId);
+    if (subject) throw new BadRequestException("subject already added to teacher");
+    user.teacher.subjects.push(subject);
+    await this.userRepo.save(user.teacher);
+
+    return true;
+  }
+
+  public async removeSubjectFromTeacher(id: number, subjectId: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Teacher },
+      relations: { teacher: { subjects: true } },
+    });
+    if (!user) throw new NotFoundException("teacher not found");
+    const subject = user.teacher.subjects.find((subject) => subject.id === subjectId);
+    if (!subject) throw new BadRequestException("subject not found");
+    user.teacher.subjects = user.teacher.subjects.filter((subject) => subject.id !== subjectId);
+    await this.userRepo.save(user.teacher);
+
+    return true;
   }
 
   public async getCompanies(): Promise<User[]> {

@@ -6,6 +6,7 @@ import { EncryptionModule } from "@/@core/encryption/encryption.module";
 import { MulterModule } from "@/@core/multer/multer.module";
 import { AuthModule } from "@/auth/auth.module";
 import { Job } from "@/job/entities/job.entity";
+import { Subject } from "@/subject/entities/subject.entity";
 import { UserController } from "./user.controller";
 import { UserService } from "./providers/user.service";
 import { RoleGuard } from "./providers/role.guard";
@@ -26,7 +27,16 @@ const GlobalUserGuard = { provide: APP_GUARD, useClass: RoleGuard };
     LoggerModule,
     EncryptionModule,
     MulterModule,
-    TypeOrmModule.forFeature([User, Student, Teacher, Company, StudentCv, StudentReport, Job]),
+    TypeOrmModule.forFeature([
+      User,
+      Student,
+      Teacher,
+      Company,
+      StudentCv,
+      StudentReport,
+      Job,
+      Subject,
+    ]),
     forwardRef(() => AuthModule),
   ],
   controllers: [UserController],

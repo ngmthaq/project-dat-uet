@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "@/@core/models/base.entity";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Nullable } from "@/@types";
+import { BaseEntity } from "@/@core/models/base.entity";
+import { Subject } from "@/subject/entities/subject.entity";
 import { Gender } from "../enums/gender.enum";
 
 @Entity()
@@ -28,4 +29,7 @@ export class Teacher extends BaseEntity {
 
   @Column({ type: "varchar", nullable: true })
   public avatarPath: Nullable<string>;
+
+  @ManyToMany(() => Subject, (subject) => subject.teachers)
+  public subjects: Subject[];
 }

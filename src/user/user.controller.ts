@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "./providers/user.service";
 import { CreateTeacherDto } from "./dto/create-teacher.dto";
 import { UpdateTeacherDto } from "./dto/update-teacher.dto";
@@ -73,6 +73,36 @@ export class UserController {
   @ApiResponse({ status: 404, description: "Teacher not found" })
   public async deleteTeacher(@Param("id") id: number) {
     return this.userService.deleteTeacher(id);
+  }
+
+  @Get("teachers/:id/subjects")
+  @ApiOperation({ summary: "Get all teacher subjects" })
+  @ApiResponse({ status: 200, description: "Get teacher subjects successfully" })
+  @ApiResponse({ status: 404, description: "Teacher not found" })
+  public async getTeacherSubjects(@Param("id") id: number) {
+    return this.userService.getTeacherSubjects(id);
+  }
+
+  @Post("teachers/:id/subjects")
+  @ApiOperation({ summary: "Add subject to teacher" })
+  @ApiBody({ schema: { type: "object", properties: { subjectId: { type: "number" } } } })
+  @ApiResponse({ status: 200, description: "Add subject to teacher successfully" })
+  @ApiResponse({ status: 404, description: "Teacher not found" })
+  @ApiResponse({ status: 404, description: "Subject not found" })
+  public async addSubjectToTeacher(@Param("id") id: number, @Body("subjectId") subjectId: number) {
+    return this.userService.addSubjectToTeacher(id, subjectId);
+  }
+
+  @Delete("teachers/:id/subjects/:subjectId")
+  @ApiOperation({ summary: "Remove subject from teacher" })
+  @ApiResponse({ status: 200, description: "Remove subject from teacher successfully" })
+  @ApiResponse({ status: 404, description: "Teacher not found" })
+  @ApiResponse({ status: 404, description: "Subject not found" })
+  public async removeSubjectFromTeacher(
+    @Param("id") id: number,
+    @Param("subjectId") subjectId: number,
+  ) {
+    return this.userService.removeSubjectFromTeacher(id, subjectId);
   }
 
   @Get("companies")
