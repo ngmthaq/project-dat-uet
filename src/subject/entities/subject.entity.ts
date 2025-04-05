@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Semester } from "@/major/entities/semester.entity";
 import { SubjectCategories } from "../enums/subject-categories.enum";
 
 @Entity()
@@ -20,4 +21,8 @@ export class Subject {
 
   @Column()
   numberOfCredits: number;
+
+  @ManyToMany(() => Semester, (semester) => semester.subjects)
+  @JoinTable()
+  semesters: Semester[];
 }
