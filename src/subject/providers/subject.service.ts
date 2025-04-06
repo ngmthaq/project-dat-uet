@@ -22,11 +22,11 @@ export class SubjectService {
   }
 
   async findAll() {
-    return this.subjectRepo.find();
+    return this.subjectRepo.find({ relations: ["classes"] });
   }
 
   async findOne(id: number) {
-    const subject = await this.subjectRepo.findOne({ where: { id } });
+    const subject = await this.subjectRepo.findOne({ where: { id }, relations: ["classes"] });
     if (!subject) throw new BadRequestException("subject not found");
 
     return subject;

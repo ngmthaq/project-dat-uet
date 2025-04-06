@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 import { UserService } from "./user.service";
 
-@ValidatorConstraint({ name: "EmailExisted", async: true })
+@ValidatorConstraint({ name: "EmailExistedRule", async: true })
 @Injectable()
 export class EmailExistedRule implements ValidatorConstraintInterface {
   constructor(private userService: UserService) {}

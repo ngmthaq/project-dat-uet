@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 import { MajorService } from "./major.service";
 
-@ValidatorConstraint({ name: "EmailExisted", async: true })
+@ValidatorConstraint({ name: "MajorExistRule", async: true })
 @Injectable()
 export class MajorExistRule implements ValidatorConstraintInterface {
   constructor(private majorService: MajorService) {}

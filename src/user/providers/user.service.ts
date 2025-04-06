@@ -31,8 +31,8 @@ export class UserService {
       where: { id },
       withDeleted,
       relations: {
-        teacher: { subjects: true },
-        company: true,
+        teacher: { subjects: true, classes: true },
+        company: { jobs: true },
         student: { studentCvs: true, studentReport: true },
       },
     });
@@ -43,8 +43,8 @@ export class UserService {
       where: { email },
       withDeleted,
       relations: {
-        teacher: { subjects: true },
-        company: true,
+        teacher: { subjects: true, classes: true },
+        company: { jobs: true },
         student: { studentCvs: true, studentReport: true },
       },
     });
@@ -53,7 +53,7 @@ export class UserService {
   public async getTeachers(): Promise<User[]> {
     const users = await this.userRepo.find({
       where: { role: Role.Teacher },
-      relations: { teacher: { subjects: true } },
+      relations: { teacher: { subjects: true, classes: true } },
     });
 
     return users.map((user) => {
@@ -65,7 +65,7 @@ export class UserService {
   public async getTeacher(id: number): Promise<User | null> {
     const user = await this.userRepo.findOne({
       where: { id, role: Role.Teacher },
-      relations: { teacher: { subjects: true } },
+      relations: { teacher: { subjects: true, classes: true } },
     });
 
     if (!user) throw new NotFoundException("teacher not found");
@@ -208,6 +208,18 @@ export class UserService {
     await this.userRepo.save(user.teacher);
 
     return true;
+  }
+
+  public async getTeacherClasses(id: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Teacher },
+      relations: { teacher: { classes: true } },
+    });
+
+    if (!user) throw new NotFoundException("teacher not found");
+    user.password = undefined;
+
+    return user?.teacher?.classes || [];
   }
 
   public async getCompanies(): Promise<User[]> {

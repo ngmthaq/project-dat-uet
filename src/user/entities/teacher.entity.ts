@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Nullable } from "@/@types";
 import { BaseEntity } from "@/@core/models/base.entity";
 import { Subject } from "@/subject/entities/subject.entity";
+import { Class } from "@/class/entities/class.entity";
 import { Gender } from "../enums/gender.enum";
 
 @Entity()
@@ -32,4 +33,7 @@ export class Teacher extends BaseEntity {
 
   @ManyToMany(() => Subject, (subject) => subject.teachers)
   public subjects: Subject[];
+
+  @OneToMany("Class", (classes: Class) => classes.teacher)
+  classes: Class[];
 }

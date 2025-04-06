@@ -105,6 +105,14 @@ export class UserController {
     return this.userService.removeSubjectFromTeacher(id, subjectId);
   }
 
+  @Get("teachers/:id/classes")
+  @ApiOperation({ summary: "Get all teacher classes" })
+  @ApiResponse({ status: 200, description: "Get teacher classes successfully" })
+  @ApiResponse({ status: 404, description: "Teacher not found" })
+  public async getTeacherClasses(@Param("id") id: number) {
+    return this.userService.getTeacherClasses(id);
+  }
+
   @Get("companies")
   @ApiOperation({ summary: "Get all companies" })
   @ApiResponse({ status: 200, description: "Get companies successfully" })
