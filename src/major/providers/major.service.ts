@@ -234,4 +234,15 @@ export class MajorService {
 
     return semester.subjects;
   }
+
+  async findAllSubjectsInMajor(id: number) {
+    const major = await this.majorRepo.findOne({
+      where: { id },
+      relations: { semesters: { subjects: true } },
+    });
+
+    if (!major) throw new BadRequestException("major not found");
+
+    return major.semesters.flatMap((semester) => semester.subjects);
+  }
 }

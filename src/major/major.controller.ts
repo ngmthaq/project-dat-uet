@@ -144,4 +144,13 @@ export class MajorController {
   ) {
     return this.majorService.removeSubjectFromSemester(+id, +semesterId, +subjectId);
   }
+
+  @Get(":id/subjects")
+  @ApiOperation({ summary: "Get all subjects in major" })
+  @ApiResponse({ status: 200, description: "The records have been successfully retrieved" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 404, description: "Not found" })
+  findAllSubjectsInMajor(@Param("id") id: string) {
+    return this.majorService.findAllSubjectsInMajor(+id);
+  }
 }
