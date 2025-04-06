@@ -1,7 +1,16 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { BaseEntity } from "@/@core/models/base.entity";
 import { Subject } from "@/subject/entities/subject.entity";
 import { Teacher } from "@/user/entities/teacher.entity";
+import { SemesterEvent } from "@/semester-event/entities/semester-event.entity";
 
 @Entity()
 export class Class extends BaseEntity {
@@ -30,4 +39,8 @@ export class Class extends BaseEntity {
   @ManyToOne(() => Teacher, (teacher) => teacher.classes)
   @JoinColumn()
   teacher: Teacher;
+
+  @ManyToMany(() => SemesterEvent, (semesterEvent) => semesterEvent.classes)
+  @JoinTable()
+  semesterEvents: SemesterEvent[];
 }

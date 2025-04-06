@@ -1,10 +1,11 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "@/@core/models/base.entity";
 import { Nullable } from "@/@types";
 import { Role } from "../enums/role.enum";
 import { Student } from "./student.entity";
 import { Teacher } from "./teacher.entity";
 import { Company } from "./company.entity";
+import { SemesterEvent } from "@/semester-event/entities/semester-event.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -31,4 +32,8 @@ export class User extends BaseEntity {
   @OneToOne(() => Company, { cascade: true, nullable: true })
   @JoinColumn()
   public company: Nullable<Company>;
+
+  @OneToMany("SemesterEvent", (semesterEvent: SemesterEvent) => semesterEvent.user)
+  @JoinColumn()
+  public semesterEvents: SemesterEvent[];
 }

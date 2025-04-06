@@ -9,10 +9,11 @@ import { TeacherExistRule } from "./providers/teacher-exist.rule";
 import { SubjectExistRule } from "./providers/subject-exist.rule";
 import { UserModule } from "@/user/user.module";
 import { SubjectModule } from "@/subject/subject.module";
+import { SemesterEvent } from "@/semester-event/entities/semester-event.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Class, Subject, Teacher]),
+    TypeOrmModule.forFeature([Class, Subject, Teacher, SemesterEvent]),
     forwardRef(() => UserModule),
     forwardRef(() => SubjectModule),
   ],

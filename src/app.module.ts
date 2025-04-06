@@ -6,8 +6,18 @@ import { JobModule } from "./job/job.module";
 import { MajorModule } from "./major/major.module";
 import { SubjectModule } from "./subject/subject.module";
 import { ClassModule } from "./class/class.module";
+import { SemesterEventModule } from "./semester-event/semester-event.module";
 
 @Module({
-  imports: [CoreModule, AuthModule, UserModule, JobModule, MajorModule, SubjectModule, ClassModule],
+  imports: [
+    CoreModule,
+    AuthModule,
+    UserModule,
+    JobModule,
+    MajorModule,
+    SubjectModule,
+    ClassModule,
+    SemesterEventModule,
+  ],
 })
 export class AppModule {}
