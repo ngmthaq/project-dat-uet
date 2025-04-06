@@ -31,7 +31,7 @@ export class Teacher extends BaseEntity {
   @Column({ type: "varchar", nullable: true })
   public avatarPath: Nullable<string>;
 
-  @ManyToMany(() => Subject, (subject) => subject.teachers)
+  @ManyToMany("Subject", (subject: Subject) => subject.teachers)
   public subjects: Subject[];
 
   @OneToMany("Class", (classes: Class) => classes.teacher)

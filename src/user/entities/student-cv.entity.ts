@@ -10,7 +10,7 @@ export class StudentCv extends BaseEntity {
   @Column({ type: "varchar" })
   public cvPath: string;
 
-  @ManyToOne(() => Student, (student) => student.studentCvs)
+  @ManyToOne("Student", (student: Student) => student.studentCvs)
   @JoinColumn()
   public student: Student;
 }

@@ -23,7 +23,7 @@ export class Job extends BaseEntity {
   @Column({ type: "datetime" })
   public to: Date;
 
-  @ManyToOne(() => Company, (company) => company.jobs)
+  @ManyToOne("Company", (company: Company) => company.jobs)
   @JoinColumn()
   public company: Company;
 }

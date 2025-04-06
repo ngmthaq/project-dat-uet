@@ -34,7 +34,7 @@ export class Student extends BaseEntity {
   @Column({ type: "varchar", nullable: true })
   public avatarPath: Nullable<string>;
 
-  @OneToOne(() => StudentReport, { cascade: true, nullable: true })
+  @OneToOne("StudentReport", { nullable: true })
   @JoinColumn()
   public studentReport: Nullable<StudentReport>;
 

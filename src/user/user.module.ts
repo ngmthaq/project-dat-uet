@@ -20,6 +20,7 @@ import { Company } from "./entities/company.entity";
 import { StudentCv } from "./entities/student-cv.entity";
 import { StudentReport } from "./entities/student-report.entity";
 import { SemesterEvent } from "@/semester-event/entities/semester-event.entity";
+import { CalendarEvent } from "@/calendar-event/entities/calendar-event.entity";
 
 const GlobalUserGuard = { provide: APP_GUARD, useClass: RoleGuard };
 
@@ -38,6 +39,7 @@ const GlobalUserGuard = { provide: APP_GUARD, useClass: RoleGuard };
       Job,
       Subject,
       SemesterEvent,
+      CalendarEvent,
     ]),
     forwardRef(() => AuthModule),
   ],

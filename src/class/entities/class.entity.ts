@@ -32,15 +32,15 @@ export class Class extends BaseEntity {
   @Column()
   duration: number;
 
-  @ManyToOne(() => Subject, (subject) => subject.classes)
+  @ManyToOne("Subject", (subject: Subject) => subject.classes)
   @JoinColumn()
   subject: Subject;
 
-  @ManyToOne(() => Teacher, (teacher) => teacher.classes)
+  @ManyToOne("Teacher", (teacher: Teacher) => teacher.classes)
   @JoinColumn()
   teacher: Teacher;
 
-  @ManyToMany(() => SemesterEvent, (semesterEvent) => semesterEvent.classes)
+  @ManyToMany("SemesterEvent", (semesterEvent: SemesterEvent) => semesterEvent.classes)
   @JoinTable()
   semesterEvents: SemesterEvent[];
 }

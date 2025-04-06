@@ -15,8 +15,8 @@ export class SemesterEventService {
     @InjectRepository(Class) private classRepo: Repository<Class>,
   ) {}
 
-  async create(createSemesterEventDto: CreateSemesterEventDto) {
-    const user = await this.userRepo.findOne({ where: { id: createSemesterEventDto.userId } });
+  async create(createSemesterEventDto: CreateSemesterEventDto, userId: number) {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) throw new BadRequestException("user not found");
     const semesterEvent = new SemesterEvent();
     semesterEvent.title = createSemesterEventDto.title;
@@ -28,13 +28,16 @@ export class SemesterEventService {
     return true;
   }
 
-  async findAll() {
-    return this.semesterEventRepo.find({ relations: { user: true, classes: true } });
+  async findAll(userId: number) {
+    return this.semesterEventRepo.find({
+      where: { user: { id: userId } },
+      relations: { user: true, classes: true },
+    });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, userId: number) {
     return this.semesterEventRepo.findOne({
-      where: { id },
+      where: { id, user: { id: userId } },
       relations: { user: true, classes: true },
     });
   }
@@ -58,9 +61,9 @@ export class SemesterEventService {
     return true;
   }
 
-  async getClasses(id: number) {
+  async getClasses(id: number, userId: number) {
     const semesterEvent = await this.semesterEventRepo.findOne({
-      where: { id },
+      where: { id, user: { id: userId } },
       relations: { classes: true },
     });
     if (!semesterEvent) throw new BadRequestException("semester event not found");

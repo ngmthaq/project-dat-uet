@@ -24,11 +24,11 @@ export class Subject {
   @Column()
   numberOfCredits: number;
 
-  @ManyToMany(() => Semester, (semester) => semester.subjects)
+  @ManyToMany("Semester", (semester: Semester) => semester.subjects)
   @JoinTable()
   semesters: Semester[];
 
-  @ManyToMany(() => Teacher, (teacher) => teacher.subjects)
+  @ManyToMany("Teacher", (teacher: Teacher) => teacher.subjects)
   @JoinTable()
   teachers: Teacher[];
 

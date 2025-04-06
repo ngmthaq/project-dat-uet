@@ -18,6 +18,6 @@ export class Semester extends BaseEntity {
   @JoinColumn()
   public major: Major;
 
-  @ManyToMany(() => Subject, (subject) => subject.semesters)
+  @ManyToMany("Subject", (subject: Subject) => subject.semesters)
   public subjects: Subject[];
 }

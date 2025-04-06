@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from "@nestjs/common";
 import { SemesterEventService } from "./providers/semester-event.service";
 import { CreateSemesterEventDto } from "./dto/create-semester-event.dto";
 import { UpdateSemesterEventDto } from "./dto/update-semester-event.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthRequest } from "@/@types";
 
 @Controller("events/semesters")
 @ApiTags("semester-events")
@@ -14,16 +15,16 @@ export class SemesterEventController {
   @ApiResponse({ status: 201, description: "The semester event has been successfully created." })
   @ApiResponse({ status: 400, description: "Bad request." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
-  create(@Body() createSemesterEventDto: CreateSemesterEventDto) {
-    return this.semesterEventService.create(createSemesterEventDto);
+  create(@Body() createSemesterEventDto: CreateSemesterEventDto, @Req() req: AuthRequest) {
+    return this.semesterEventService.create(createSemesterEventDto, req.user.id);
   }
 
   @Get()
   @ApiOperation({ summary: "Get all semester events" })
   @ApiResponse({ status: 200, description: "List of all semester events." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
-  findAll() {
-    return this.semesterEventService.findAll();
+  findAll(@Req() req: AuthRequest) {
+    return this.semesterEventService.findAll(req.user.id);
   }
 
   @Get(":id")
@@ -31,8 +32,8 @@ export class SemesterEventController {
   @ApiResponse({ status: 200, description: "The semester event has been successfully retrieved." })
   @ApiResponse({ status: 404, description: "Semester event not found." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
-  findOne(@Param("id") id: string) {
-    return this.semesterEventService.findOne(+id);
+  findOne(@Param("id") id: string, @Req() req: AuthRequest) {
+    return this.semesterEventService.findOne(+id, req.user.id);
   }
 
   @Patch(":id")
@@ -59,8 +60,8 @@ export class SemesterEventController {
   @ApiResponse({ status: 200, description: "List of all classes for semester events." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
   @ApiResponse({ status: 404, description: "Semester event not found." })
-  getClasses(@Param("id") id: string) {
-    return this.semesterEventService.getClasses(+id);
+  getClasses(@Param("id") id: string, @Req() req: AuthRequest) {
+    return this.semesterEventService.getClasses(+id, req.user.id);
   }
 
   @Post(":id/classes")

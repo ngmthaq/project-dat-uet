@@ -6,6 +6,7 @@ import { Student } from "./student.entity";
 import { Teacher } from "./teacher.entity";
 import { Company } from "./company.entity";
 import { SemesterEvent } from "@/semester-event/entities/semester-event.entity";
+import { CalendarEvent } from "@/calendar-event/entities/calendar-event.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -21,19 +22,23 @@ export class User extends BaseEntity {
   @Column({ type: "enum", enum: Role, default: Role.Student })
   public role: Role;
 
-  @OneToOne(() => Student, { cascade: true, nullable: true })
+  @OneToOne("Student", { nullable: true })
   @JoinColumn()
   public student: Nullable<Student>;
 
-  @OneToOne(() => Teacher, { cascade: true, nullable: true })
+  @OneToOne("Teacher", { nullable: true })
   @JoinColumn()
   public teacher: Nullable<Teacher>;
 
-  @OneToOne(() => Company, { cascade: true, nullable: true })
+  @OneToOne("Company", { nullable: true })
   @JoinColumn()
   public company: Nullable<Company>;
 
   @OneToMany("SemesterEvent", (semesterEvent: SemesterEvent) => semesterEvent.user)
   @JoinColumn()
   public semesterEvents: SemesterEvent[];
+
+  @OneToMany("CalendarEvent", (calendarEvent: CalendarEvent) => calendarEvent.user)
+  @JoinColumn()
+  public calendarEvents: CalendarEvent[];
 }
