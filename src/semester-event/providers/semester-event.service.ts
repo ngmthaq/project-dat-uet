@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateSemesterEventDto } from "../dto/create-semester-event.dto";
 import { UpdateSemesterEventDto } from "../dto/update-semester-event.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -17,7 +17,7 @@ export class SemesterEventService {
 
   async create(createSemesterEventDto: CreateSemesterEventDto, userId: number) {
     const user = await this.userRepo.findOne({ where: { id: userId } });
-    if (!user) throw new BadRequestException("user not found");
+    if (!user) throw new NotFoundException("user not found");
     const semesterEvent = new SemesterEvent();
     semesterEvent.title = createSemesterEventDto.title;
     semesterEvent.from = new Date(createSemesterEventDto.from);
@@ -44,7 +44,7 @@ export class SemesterEventService {
 
   async update(id: number, updateSemesterEventDto: UpdateSemesterEventDto) {
     const semesterEvent = await this.semesterEventRepo.findOne({ where: { id } });
-    if (!semesterEvent) throw new BadRequestException("semester event not found");
+    if (!semesterEvent) throw new NotFoundException("semester event not found");
     semesterEvent.title = updateSemesterEventDto.title;
     semesterEvent.from = new Date(updateSemesterEventDto.from);
     semesterEvent.to = new Date(updateSemesterEventDto.to);
@@ -55,7 +55,7 @@ export class SemesterEventService {
 
   async remove(id: number) {
     const semesterEvent = await this.semesterEventRepo.findOne({ where: { id } });
-    if (!semesterEvent) throw new BadRequestException("semester event not found");
+    if (!semesterEvent) throw new NotFoundException("semester event not found");
     await this.semesterEventRepo.softDelete(semesterEvent);
 
     return true;
@@ -66,7 +66,7 @@ export class SemesterEventService {
       where: { id, user: { id: userId } },
       relations: { classes: true },
     });
-    if (!semesterEvent) throw new BadRequestException("semester event not found");
+    if (!semesterEvent) throw new NotFoundException("semester event not found");
 
     return semesterEvent.classes || [];
   }
@@ -76,7 +76,7 @@ export class SemesterEventService {
       where: { id },
       relations: { classes: true },
     });
-    if (!semesterEvent) throw new BadRequestException("semester event not found");
+    if (!semesterEvent) throw new NotFoundException("semester event not found");
     const classes = await this.classRepo.findBy({ id: In(classIds) });
     semesterEvent.classes = [...semesterEvent.classes, ...classes];
     await this.semesterEventRepo.save(semesterEvent);
@@ -89,12 +89,12 @@ export class SemesterEventService {
       where: { id },
       relations: { classes: true },
     });
-    if (!semesterEvent) throw new BadRequestException("semester event not found");
+    if (!semesterEvent) throw new NotFoundException("semester event not found");
 
     const classEntity = await this.classRepo.findOne({ where: { id: classId } });
-    if (!classEntity) throw new BadRequestException("class not found");
+    if (!classEntity) throw new NotFoundException("class not found");
     if (!semesterEvent.classes.some((classEntity) => classEntity.id === classId)) {
-      throw new BadRequestException("class not found in semester event");
+      throw new NotFoundException("class not found in semester event");
     }
 
     semesterEvent.classes = semesterEvent.classes.filter(

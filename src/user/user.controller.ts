@@ -18,6 +18,8 @@ import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { CreateStudentDto } from "./dto/create-student.dto";
 import { UpdateStudentDto } from "./dto/update-student.dto";
+import { CreateReportDto } from "./dto/create-report.dto";
+import { UpdateReportDto } from "./dto/update-report.dto";
 
 @Controller("users")
 @ApiTags("users")
@@ -257,5 +259,62 @@ export class UserController {
   @ApiResponse({ status: 404, description: "Student CV not found" })
   public async deleteStudentCV(@Param("id") id: number, @Param("cvId") cvId: number) {
     return this.userService.deleteStudentCV(id, cvId);
+  }
+
+  @Get("students/:id/report")
+  @ApiOperation({ summary: "Get student report" })
+  @ApiResponse({ status: 200, description: "Get student report successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  @ApiResponse({ status: 404, description: "Student report not found" })
+  public async getStudentReport(@Param("id") id: number) {
+    return this.userService.getStudentReport(id);
+  }
+
+  @Post("students/:id/report")
+  @ApiOperation({ summary: "Create student report" })
+  @ApiResponse({ status: 200, description: "Create student report successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  @ApiResponse({ status: 400, description: "Create student report failed" })
+  public async createStudentReport(
+    @Param("id") id: number,
+    @Body() createStudentReportDto: CreateReportDto,
+  ) {
+    return this.userService.createStudentReport(id, createStudentReportDto);
+  }
+
+  @Post("students/:id/upload")
+  @UseInterceptors(FileInterceptor("attachment"))
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({ summary: "Upload student report" })
+  @ApiResponse({ status: 200, description: "Upload student report successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  @ApiResponse({ status: 400, description: "Upload student report failed" })
+  public async uploadStudentReport(
+    @Param("id") id: number,
+    @UploadedFile() attachment: Express.Multer.File,
+  ) {
+    return this.userService.uploadStudentReport(id, attachment);
+  }
+
+  @Patch("students/:id/report")
+  @ApiOperation({ summary: "Update student report" })
+  @ApiResponse({ status: 200, description: "Update student report successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  @ApiResponse({ status: 404, description: "Student report not found" })
+  @ApiResponse({ status: 400, description: "Update student report failed" })
+  public async updateStudentReport(
+    @Param("id") id: number,
+    @Body() updateStudentReportDto: UpdateReportDto,
+  ) {
+    return this.userService.updateStudentReport(id, updateStudentReportDto);
+  }
+
+  @Delete("students/:id/report")
+  @ApiOperation({ summary: "Delete student report" })
+  @ApiResponse({ status: 200, description: "Delete student report successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  @ApiResponse({ status: 404, description: "Student report not found" })
+  public async deleteStudentReport(@Param("id") id: number) {
+    return this.userService.deleteStudentReport(id);
   }
 }

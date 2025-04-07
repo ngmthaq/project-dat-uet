@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Company } from "@/user/entities/company.entity";
@@ -15,7 +15,7 @@ export class JobService {
 
   public async create(createJobDto: CreateJobDto, cover?: Express.Multer.File) {
     const company = await this.companyRepo.findOne({ where: { id: createJobDto.companyId } });
-    if (!company) throw new BadRequestException("company not found");
+    if (!company) throw new NotFoundException("company not found");
     const job = new Job();
     job.title = createJobDto.title;
     job.content = createJobDto.content;
@@ -34,13 +34,13 @@ export class JobService {
 
   public async findOne(id: number) {
     const job = await this.jobRepo.findOne({ where: { id }, relations: { company: true } });
-    if (!job) throw new BadRequestException("job not found");
+    if (!job) throw new NotFoundException("job not found");
     return job;
   }
 
   public async update(id: number, updateJobDto: UpdateJobDto, cover?: Express.Multer.File) {
     const job = await this.jobRepo.findOne({ where: { id } });
-    if (!job) throw new BadRequestException("job not found");
+    if (!job) throw new NotFoundException("job not found");
     job.title = updateJobDto.title;
     job.content = updateJobDto.content;
     job.from = updateJobDto.from;
@@ -53,7 +53,7 @@ export class JobService {
 
   public async remove(id: number) {
     const job = await this.jobRepo.findOne({ where: { id } });
-    if (!job) throw new BadRequestException("job not found");
+    if (!job) throw new NotFoundException("job not found");
     await this.jobRepo.softDelete(id);
     return true;
   }

@@ -16,12 +16,18 @@ import { UpdateCompanyDto } from "../dto/update-company.dto";
 import { CreateStudentDto } from "../dto/create-student.dto";
 import { UpdateStudentDto } from "../dto/update-student.dto";
 import { StudentCv } from "../entities/student-cv.entity";
+import { CreateReportDto } from "../dto/create-report.dto";
+import { UpdateReportDto } from "../dto/update-report.dto";
+import { StudentReport } from "../entities/student-report.entity";
+import { Job } from "@/job/entities/job.entity";
 
 @Injectable()
 export class UserService {
   public constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(StudentCv) private cvRepo: Repository<StudentCv>,
+    @InjectRepository(StudentReport) private reportRepo: Repository<StudentReport>,
+    @InjectRepository(Job) private jobRepo: Repository<Job>,
     private encryptionService: EncryptionService,
     private dataSource: DataSource,
   ) {}
@@ -203,7 +209,7 @@ export class UserService {
     });
     if (!user) throw new NotFoundException("teacher not found");
     const subject = user.teacher.subjects.find((subject) => subject.id === subjectId);
-    if (!subject) throw new BadRequestException("subject not found");
+    if (!subject) throw new NotFoundException("subject not found");
     user.teacher.subjects = user.teacher.subjects.filter((subject) => subject.id !== subjectId);
     await this.userRepo.save(user.teacher);
 
@@ -548,6 +554,86 @@ export class UserService {
 
     await this.cvRepo.remove(cv);
     await fs.unlink(cv.cvPath);
+
+    return true;
+  }
+
+  public async getStudentReport(id: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+      relations: { student: { studentReport: true } },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+
+    return user?.student?.studentReport || null;
+  }
+
+  public async createStudentReport(id: number, createReportDto: CreateReportDto) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+      relations: { student: true },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+
+    const job = await this.jobRepo.findOne({
+      where: { id: createReportDto.jobId },
+    });
+
+    if (!job) throw new NotFoundException("job not found");
+
+    const studentReport = new StudentReport();
+    studentReport.job = job;
+    await this.userRepo.save(studentReport);
+
+    return true;
+  }
+
+  public async uploadStudentReport(id: number, reportFile: Express.Multer.File) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+      relations: { student: true },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+
+    const report = new StudentReport();
+    report.attachmentPath = reportFile.path;
+    await this.userRepo.save(report);
+
+    return true;
+  }
+
+  public async updateStudentReport(id: number, updateReportDto: UpdateReportDto) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+      relations: { student: { studentReport: true } },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+    if (!user.student.studentReport) throw new NotFoundException("student report not found");
+    const report = user.student.studentReport;
+    report.score = updateReportDto.score;
+    report.comment = updateReportDto.comment;
+    report.status = updateReportDto.status;
+    await this.userRepo.save(report);
+
+    return true;
+  }
+
+  public async deleteStudentReport(id: number) {
+    const user = await this.userRepo.findOne({
+      where: { id, role: Role.Student },
+      relations: { student: { studentReport: true } },
+    });
+
+    if (!user) throw new NotFoundException("student not found");
+    if (!user.student.studentReport) throw new NotFoundException("student report not found");
+
+    const report = user.student.studentReport;
+    await this.reportRepo.remove(report);
+    await fs.unlink(report.attachmentPath);
 
     return true;
   }

@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "@/@core/models/base.entity";
 import { Nullable } from "@/@types";
 import { Company } from "@/user/entities/company.entity";
+import { StudentReport } from "@/user/entities/student-report.entity";
 
 @Entity()
 export class Job extends BaseEntity {
@@ -22,6 +23,10 @@ export class Job extends BaseEntity {
 
   @Column({ type: "datetime" })
   public to: Date;
+
+  @OneToMany("StudentReport", (studentReport: StudentReport) => studentReport.job)
+  @JoinColumn()
+  public studentReports: StudentReport[];
 
   @ManyToOne("Company", (company: Company) => company.jobs)
   @JoinColumn()

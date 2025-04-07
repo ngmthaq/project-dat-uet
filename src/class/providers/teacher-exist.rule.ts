@@ -19,6 +19,6 @@ export class TeacherExistRule implements ValidatorConstraintInterface {
   }
 
   defaultMessage() {
-    return `subject is not exist`;
+    return `teacher is not exist`;
   }
 }

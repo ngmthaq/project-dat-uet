@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Subject } from "@/subject/entities/subject.entity";
@@ -39,14 +39,14 @@ export class MajorService {
 
   async findOne(id: number) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
 
     return major;
   }
 
   async update(id: number, updateMajorDto: UpdateMajorDto) {
     const major = await this.majorRepo.findOne({ where: { id } });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     major.majorNo = updateMajorDto.majorNo;
     major.name = updateMajorDto.name;
     major.englishName = updateMajorDto.englishName;
@@ -63,7 +63,7 @@ export class MajorService {
 
   async remove(id: number) {
     const major = await this.majorRepo.findOne({ where: { id } });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     await this.majorRepo.softDelete(id);
 
     return true;
@@ -71,23 +71,23 @@ export class MajorService {
 
   async findAllSemesters(id: number) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
 
     return major.semesters;
   }
 
   async findOneSemester(id: number, semesterId: number) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semester = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semester) throw new BadRequestException("semester not found");
+    if (!semester) throw new NotFoundException("semester not found");
 
     return semester;
   }
 
   async createSemester(id: number, createSemesterDto: CreateSemesterDto) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semester = new Semester();
     semester.year = createSemesterDto.year;
     semester.period = createSemesterDto.period;
@@ -99,9 +99,9 @@ export class MajorService {
 
   async updateSemester(id: number, semesterId: number, updateSemesterDto: UpdateSemesterDto) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semesterToUpdate = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semesterToUpdate) throw new BadRequestException("semester not found");
+    if (!semesterToUpdate) throw new NotFoundException("semester not found");
     semesterToUpdate.year = updateSemesterDto.year;
     semesterToUpdate.period = updateSemesterDto.period;
     await this.semesterRepo.save(semesterToUpdate);
@@ -111,9 +111,9 @@ export class MajorService {
 
   async removeSemester(id: number, semesterId: number) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semesterToDelete = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semesterToDelete) throw new BadRequestException("semester not found");
+    if (!semesterToDelete) throw new NotFoundException("semester not found");
     await this.semesterRepo.softDelete(semesterId);
 
     return true;
@@ -121,22 +121,22 @@ export class MajorService {
 
   async findSemestersByMajorId(id: number) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     return major.semesters;
   }
 
   async findSemesterById(id: number, semesterId: number) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semester = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semester) throw new BadRequestException("semester not found");
+    if (!semester) throw new NotFoundException("semester not found");
 
     return semester;
   }
 
   async createSemesterByMajorId(id: number, createSemesterDto: CreateSemesterDto) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semester = new Semester();
     semester.year = createSemesterDto.year;
     semester.period = createSemesterDto.period;
@@ -148,9 +148,9 @@ export class MajorService {
 
   async updateSemesterById(id: number, semesterId: number, updateSemesterDto: UpdateSemesterDto) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semesterToUpdate = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semesterToUpdate) throw new BadRequestException("semester not found");
+    if (!semesterToUpdate) throw new NotFoundException("semester not found");
     semesterToUpdate.year = updateSemesterDto.year;
     semesterToUpdate.period = updateSemesterDto.period;
     await this.semesterRepo.save(semesterToUpdate);
@@ -160,9 +160,9 @@ export class MajorService {
 
   async removeSemesterById(id: number, semesterId: number) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semesterToDelete = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semesterToDelete) throw new BadRequestException("semester not found");
+    if (!semesterToDelete) throw new NotFoundException("semester not found");
     await this.semesterRepo.softDelete(semesterId);
 
     return true;
@@ -170,9 +170,9 @@ export class MajorService {
 
   async findSemestersByMajorIdAndSemesterId(id: number, semesterId: number) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semester = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semester) throw new BadRequestException("semester not found");
+    if (!semester) throw new NotFoundException("semester not found");
 
     return semester;
   }
@@ -183,22 +183,22 @@ export class MajorService {
     subjectId: number,
   ) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semester = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semester) throw new BadRequestException("semester not found");
+    if (!semester) throw new NotFoundException("semester not found");
     const subject = semester.subjects.find((subject) => subject.id === subjectId);
-    if (!subject) throw new BadRequestException("subject not found");
+    if (!subject) throw new NotFoundException("subject not found");
 
     return subject;
   }
 
   async addSubjectToSemester(id: number, semesterId: number, subjectId: number) {
     const major = await this.majorRepo.findOne({ where: { id }, relations: ["semesters"] });
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semester = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semester) throw new BadRequestException("semester not found");
+    if (!semester) throw new NotFoundException("semester not found");
     const subject = await this.subjectRepo.findOne({ where: { id: subjectId } });
-    if (!subject) throw new BadRequestException("subject not found");
+    if (!subject) throw new NotFoundException("subject not found");
     semester.subjects.push(subject);
     await this.semesterRepo.save(semester);
 
@@ -211,11 +211,11 @@ export class MajorService {
       relations: { semesters: { subjects: true } },
     });
 
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semester = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semester) throw new BadRequestException("semester not found");
+    if (!semester) throw new NotFoundException("semester not found");
     const subject = semester.subjects.find((subject) => subject.id === subjectId);
-    if (!subject) throw new BadRequestException("subject not found");
+    if (!subject) throw new NotFoundException("subject not found");
     semester.subjects = semester.subjects.filter((subject) => subject.id !== subjectId);
     await this.semesterRepo.save(semester);
 
@@ -228,9 +228,9 @@ export class MajorService {
       relations: { semesters: { subjects: true } },
     });
 
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
     const semester = major.semesters.find((semester) => semester.id === semesterId);
-    if (!semester) throw new BadRequestException("semester not found");
+    if (!semester) throw new NotFoundException("semester not found");
 
     return semester.subjects;
   }
@@ -241,7 +241,7 @@ export class MajorService {
       relations: { semesters: { subjects: true } },
     });
 
-    if (!major) throw new BadRequestException("major not found");
+    if (!major) throw new NotFoundException("major not found");
 
     return major.semesters.flatMap((semester) => semester.subjects);
   }

@@ -31,6 +31,7 @@ export async function bootstrap() {
         `> NestJS Framework`,
         `> App is listening on http://127.0.0.1:${port}`,
         `> Swagger is listening on http://127.0.0.1:${port}/swagger`,
+        `> Swagger JSON is listening on http://127.0.0.1:${port}/swagger-json`,
         `==============================================================`,
       ].join("\n"),
     );

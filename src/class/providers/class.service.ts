@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Subject } from "@/subject/entities/subject.entity";
@@ -20,13 +20,13 @@ export class ClassService {
       where: { id: createClassDto.subjectId },
     });
 
-    if (!subject) throw new BadRequestException("subject not found");
+    if (!subject) throw new NotFoundException("subject not found");
 
     const teacher = await this.teacherRepository.findOne({
       where: { id: createClassDto.teacherId },
     });
 
-    if (!teacher) throw new BadRequestException("teacher not found");
+    if (!teacher) throw new NotFoundException("teacher not found");
 
     const className = new Class();
     className.classNo = createClassDto.classNo;
@@ -60,19 +60,19 @@ export class ClassService {
       relations: ["subject", "teacher"],
     });
 
-    if (!className) throw new BadRequestException("class not found");
+    if (!className) throw new NotFoundException("class not found");
 
     className.subject = await this.subjectRepository.findOne({
       where: { id: updateClassDto.subjectId },
     });
 
-    if (!className.subject) throw new BadRequestException("subject not found");
+    if (!className.subject) throw new NotFoundException("subject not found");
 
     className.teacher = await this.teacherRepository.findOne({
       where: { id: updateClassDto.teacherId },
     });
 
-    if (!className.teacher) throw new BadRequestException("teacher not found");
+    if (!className.teacher) throw new NotFoundException("teacher not found");
 
     className.classNo = updateClassDto.classNo;
     className.room = updateClassDto.room;
@@ -90,7 +90,7 @@ export class ClassService {
       relations: ["subject", "teacher"],
     });
 
-    if (!className) throw new BadRequestException("class not found");
+    if (!className) throw new NotFoundException("class not found");
     await this.classRepository.softDelete(id);
 
     return true;

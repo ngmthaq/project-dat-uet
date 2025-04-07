@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateCalendarEventDto } from "../dto/create-calendar-event.dto";
 import { UpdateCalendarEventDto } from "../dto/update-calendar-event.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -18,7 +18,7 @@ export class CalendarEventService {
       where: { id: userId },
     });
 
-    if (!user) throw new BadRequestException("user not found");
+    if (!user) throw new NotFoundException("user not found");
 
     const calendarEvent = new CalendarEvent();
     calendarEvent.title = createCalendarEventDto.title;
@@ -51,7 +51,7 @@ export class CalendarEventService {
       relations: { user: true },
     });
 
-    if (!calendarEvent) throw new BadRequestException("calendar event not found");
+    if (!calendarEvent) throw new NotFoundException("calendar event not found");
 
     calendarEvent.title = updateCalendarEventDto.title;
     calendarEvent.content = updateCalendarEventDto.content;
@@ -64,7 +64,7 @@ export class CalendarEventService {
 
   async remove(id: number) {
     const calendarEvent = await this.calendarEventRepo.findOne({ where: { id } });
-    if (!calendarEvent) throw new BadRequestException("calendar event not found");
+    if (!calendarEvent) throw new NotFoundException("calendar event not found");
     await this.calendarEventRepo.softDelete(calendarEvent);
 
     return true;
