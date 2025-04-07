@@ -20,11 +20,13 @@ import { CreateReportDto } from "../dto/create-report.dto";
 import { UpdateReportDto } from "../dto/update-report.dto";
 import { StudentReport } from "../entities/student-report.entity";
 import { Job } from "@/job/entities/job.entity";
+import { CompanyType } from "../enums/company-type.enum";
 
 @Injectable()
 export class UserService {
   public constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Company) private companyRepo: Repository<Company>,
     @InjectRepository(StudentCv) private cvRepo: Repository<StudentCv>,
     @InjectRepository(StudentReport) private reportRepo: Repository<StudentReport>,
     @InjectRepository(Job) private jobRepo: Repository<Job>,
@@ -121,7 +123,7 @@ export class UserService {
   public async updateTeacher(
     id: number,
     updateTeacherDto: UpdateTeacherDto,
-    avatar: Express.Multer.File,
+    avatar?: Express.Multer.File,
   ): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -266,7 +268,7 @@ export class UserService {
 
   public async createCompany(
     createCompanyDto: CreateCompanyDto,
-    avatar: Express.Multer.File,
+    avatar?: Express.Multer.File,
   ): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -278,7 +280,7 @@ export class UserService {
       company.address = createCompanyDto.address;
       company.phoneNumber = createCompanyDto.phoneNumber;
       company.description = createCompanyDto.description;
-      company.type = createCompanyDto.type;
+      company.type = CompanyType.Partner;
       company.domain = createCompanyDto.domain;
       company.website = createCompanyDto.website;
       if (avatar) company.logoPath = avatar.path;
@@ -327,7 +329,6 @@ export class UserService {
       user.company.address = updateCompanyDto.address;
       user.company.phoneNumber = updateCompanyDto.phoneNumber;
       user.company.description = updateCompanyDto.description;
-      user.company.type = updateCompanyDto.type;
       user.company.domain = updateCompanyDto.domain;
       user.company.website = updateCompanyDto.website;
 
@@ -428,7 +429,7 @@ export class UserService {
   public async updateStudent(
     id: number,
     updateStudentDto: UpdateStudentDto,
-    avatar: Express.Multer.File,
+    avatar?: Express.Multer.File,
   ): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -588,6 +589,52 @@ export class UserService {
     await this.userRepo.save(studentReport);
 
     return true;
+  }
+
+  public async createStudentReportExternal(id: number, createCompanyDto: CreateCompanyDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = await this.userRepo.findOne({
+        where: { id, role: Role.Student },
+        relations: { student: true },
+      });
+
+      if (!user) throw new NotFoundException("student not found");
+
+      const company = new Company();
+      company.name = createCompanyDto.name;
+      company.address = createCompanyDto.address;
+      company.phoneNumber = createCompanyDto.phoneNumber;
+      company.description = createCompanyDto.description;
+      company.type = CompanyType.External;
+      company.domain = createCompanyDto.domain;
+      company.website = createCompanyDto.website;
+      await this.companyRepo.save(company);
+
+      const job = new Job();
+      job.title = createCompanyDto.name;
+      job.content = createCompanyDto.description;
+      job.from = new Date();
+      job.to = new Date();
+      job.company = company;
+      await this.jobRepo.save(job);
+
+      const studentReport = new StudentReport();
+      studentReport.job = job;
+      await this.userRepo.save(studentReport);
+      await queryRunner.commitTransaction();
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   public async uploadStudentReport(id: number, reportFile: Express.Multer.File) {

@@ -1,14 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUrl,
-  Validate,
-} from "class-validator";
-import { CompanyType } from "../enums/company-type.enum";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUrl, Validate } from "class-validator";
 import { EmailExistedRule } from "../providers/email-existed.rule";
 
 export class CreateCompanyDto {
@@ -38,11 +29,6 @@ export class CreateCompanyDto {
   @IsString()
   @ApiProperty({ example: "Description of this company" })
   public description: string;
-
-  @IsNotEmpty()
-  @IsEnum(CompanyType)
-  @ApiProperty({ example: CompanyType.Partner, enum: CompanyType })
-  public type: CompanyType;
 
   @IsNotEmpty()
   @IsString()

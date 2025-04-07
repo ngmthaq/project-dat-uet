@@ -9,6 +9,7 @@ import { LoginDto } from "../dto/login.dto";
 import { ChangePasswordDto } from "../dto/change-password.dto";
 import { UpdateReportDto } from "@/user/dto/update-report.dto";
 import { CreateReportDto } from "@/user/dto/create-report.dto";
+import { CreateCompanyDto } from "@/user/dto/create-company.dto";
 
 @Injectable()
 export class AuthService {
@@ -71,6 +72,10 @@ export class AuthService {
 
   public async createStudentReport(id: number, createReportDto: CreateReportDto) {
     return this.userService.createStudentReport(id, createReportDto);
+  }
+
+  public async createStudentReportExternal(id: number, createCompanyDto: CreateCompanyDto) {
+    return this.userService.createStudentReportExternal(id, createCompanyDto);
   }
 
   public async uploadStudentReport(id: number, reportFile: Express.Multer.File) {

@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SubjectService } from "./providers/subject.service";
 import { CreateSubjectDto } from "./dto/create-subject.dto";
 import { UpdateSubjectDto } from "./dto/update-subject.dto";
@@ -11,6 +11,7 @@ export class SubjectController {
 
   @Post()
   @ApiOperation({ summary: "Create subject" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 201, description: "The record has been successfully created" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   @ApiResponse({ status: 400, description: "Bad request" })
@@ -20,6 +21,7 @@ export class SubjectController {
 
   @Get()
   @ApiOperation({ summary: "Get all subjects" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The records have been successfully retrieved" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   findAll() {
@@ -28,6 +30,7 @@ export class SubjectController {
 
   @Get(":id")
   @ApiOperation({ summary: "Get subject by id" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The record has been successfully retrieved" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   @ApiResponse({ status: 404, description: "Not found" })
@@ -37,6 +40,7 @@ export class SubjectController {
 
   @Patch(":id")
   @ApiOperation({ summary: "Update subject" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The record has been successfully updated" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   @ApiResponse({ status: 404, description: "Not found" })
@@ -47,6 +51,7 @@ export class SubjectController {
 
   @Delete(":id")
   @ApiOperation({ summary: "Delete subject" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The record has been successfully deleted" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   @ApiResponse({ status: 404, description: "Not found" })

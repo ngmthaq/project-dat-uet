@@ -13,7 +13,14 @@ import {
   Patch,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { AuthRequest } from "@/@types";
 import { AuthService } from "./providers/auth.service";
 import { SkipAuth } from "./providers/skip-auth.decorator";
@@ -21,6 +28,7 @@ import { LoginDto } from "./dto/login.dto";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { CreateReportDto } from "@/user/dto/create-report.dto";
 import { UpdateReportDto } from "@/user/dto/update-report.dto";
+import { CreateCompanyDto } from "@/user/dto/create-company.dto";
 
 @Controller("auth")
 @ApiTags("auth")
@@ -39,6 +47,7 @@ export class AuthController {
 
   @Get("user")
   @ApiOperation({ summary: "Auth user", description: "Get auth user profile" })
+  @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, description: "Success" })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: "Unauthorize" })
   public getAuthUser(@Req() req: AuthRequest) {
@@ -47,6 +56,7 @@ export class AuthController {
 
   @Post("password/change")
   @ApiOperation({ summary: "Change password" })
+  @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, description: "Change password success" })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Old password incorrect" })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: "Unauthorize" })
@@ -56,6 +66,7 @@ export class AuthController {
 
   @Get("cvs")
   @ApiOperation({ summary: "Get all student CVs" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get student CVs successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   public async getStudentCVs(@Req() req: AuthRequest) {
@@ -64,6 +75,7 @@ export class AuthController {
 
   @Get("cvs/:cvId")
   @ApiOperation({ summary: "Get student CV by id" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get student CV successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 404, description: "Student CV not found" })
@@ -75,6 +87,8 @@ export class AuthController {
   @UseInterceptors(FileInterceptor("cv"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Upload student CV" })
+  @ApiBearerAuth()
+  @ApiBody({ schema: { type: "object", properties: { cv: { type: "string", format: "binary" } } } })
   @ApiResponse({ status: 200, description: "Upload CV successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 400, description: "Upload CV failed" })
@@ -84,6 +98,7 @@ export class AuthController {
 
   @Delete("cvs/:cvId")
   @ApiOperation({ summary: "Delete student CV" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Delete student CV successfully" })
   @ApiResponse({ status: 404, description: "Student CV not found" })
   public async deleteStudentCV(@Param("cvId") cvId: number, @Req() req: AuthRequest) {
@@ -92,6 +107,7 @@ export class AuthController {
 
   @Get("report")
   @ApiOperation({ summary: "Get student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 404, description: "Student report not found" })
@@ -101,6 +117,7 @@ export class AuthController {
 
   @Post("report")
   @ApiOperation({ summary: "Create student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Create student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 400, description: "Create student report failed" })
@@ -111,10 +128,24 @@ export class AuthController {
     return this.authService.createStudentReport(req.user.id, createStudentReportDto);
   }
 
+  @Post("report/external")
+  @ApiOperation({ summary: "Create student report for external company" })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: "Create student report successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  @ApiResponse({ status: 400, description: "Create student report failed" })
+  public async createStudentReportExternal(
+    @Req() req: AuthRequest,
+    @Body() createCompanyDto: CreateCompanyDto,
+  ) {
+    return this.authService.createStudentReportExternal(req.user.id, createCompanyDto);
+  }
+
   @Post("report/upload")
   @UseInterceptors(FileInterceptor("attachment"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Upload student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Upload student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 400, description: "Upload student report failed" })
@@ -127,6 +158,7 @@ export class AuthController {
 
   @Patch("report")
   @ApiOperation({ summary: "Update student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Update student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 404, description: "Student report not found" })
@@ -140,6 +172,7 @@ export class AuthController {
 
   @Delete("report")
   @ApiOperation({ summary: "Delete student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Delete student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 404, description: "Student report not found" })

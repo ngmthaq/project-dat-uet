@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from "@nestjs/
 import { CalendarEventService } from "./providers/calendar-event.service";
 import { CreateCalendarEventDto } from "./dto/create-calendar-event.dto";
 import { UpdateCalendarEventDto } from "./dto/update-calendar-event.dto";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthRequest } from "@/@types";
 
 @Controller("events/calendar")
@@ -12,6 +12,7 @@ export class CalendarEventController {
 
   @Post()
   @ApiOperation({ summary: "Create a new calendar event" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 201, description: "The calendar event has been successfully created." })
   @ApiResponse({ status: 400, description: "Bad Request" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
@@ -21,6 +22,7 @@ export class CalendarEventController {
 
   @Get()
   @ApiOperation({ summary: "Get all calendar events" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "List of calendar events" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   findAll(@Req() req: AuthRequest) {
@@ -29,6 +31,7 @@ export class CalendarEventController {
 
   @Get(":id")
   @ApiOperation({ summary: "Get a calendar event by ID" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The calendar event has been successfully retrieved." })
   @ApiResponse({ status: 404, description: "Calendar event not found" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
@@ -38,6 +41,7 @@ export class CalendarEventController {
 
   @Patch(":id")
   @ApiOperation({ summary: "Update a calendar event by ID" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The calendar event has been successfully updated." })
   @ApiResponse({ status: 400, description: "Bad Request" })
   @ApiResponse({ status: 404, description: "Calendar event not found" })
@@ -48,6 +52,7 @@ export class CalendarEventController {
 
   @Delete(":id")
   @ApiOperation({ summary: "Delete a calendar event by ID" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The calendar event has been successfully deleted." })
   @ApiResponse({ status: 404, description: "Calendar event not found" })
   @ApiResponse({ status: 401, description: "Unauthorized" })

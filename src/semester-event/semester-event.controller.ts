@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from "@nestjs/
 import { SemesterEventService } from "./providers/semester-event.service";
 import { CreateSemesterEventDto } from "./dto/create-semester-event.dto";
 import { UpdateSemesterEventDto } from "./dto/update-semester-event.dto";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthRequest } from "@/@types";
 
 @Controller("events/semesters")
@@ -12,6 +12,7 @@ export class SemesterEventController {
 
   @Post()
   @ApiOperation({ summary: "Create a new semester event" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 201, description: "The semester event has been successfully created." })
   @ApiResponse({ status: 400, description: "Bad request." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
@@ -21,6 +22,7 @@ export class SemesterEventController {
 
   @Get()
   @ApiOperation({ summary: "Get all semester events" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "List of all semester events." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
   findAll(@Req() req: AuthRequest) {
@@ -29,6 +31,7 @@ export class SemesterEventController {
 
   @Get(":id")
   @ApiOperation({ summary: "Get a semester event by ID" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The semester event has been successfully retrieved." })
   @ApiResponse({ status: 404, description: "Semester event not found." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
@@ -38,6 +41,7 @@ export class SemesterEventController {
 
   @Patch(":id")
   @ApiOperation({ summary: "Update a semester event by ID" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The semester event has been successfully updated." })
   @ApiResponse({ status: 404, description: "Semester event not found." })
   @ApiResponse({ status: 400, description: "Bad request." })
@@ -48,6 +52,7 @@ export class SemesterEventController {
 
   @Delete(":id")
   @ApiOperation({ summary: "Delete a semester event by ID" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "The semester event has been successfully deleted." })
   @ApiResponse({ status: 404, description: "Semester event not found." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
@@ -57,6 +62,7 @@ export class SemesterEventController {
 
   @Get(":id/classes")
   @ApiOperation({ summary: "Get all classes for semester events" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "List of all classes for semester events." })
   @ApiResponse({ status: 401, description: "Unauthorized." })
   @ApiResponse({ status: 404, description: "Semester event not found." })
@@ -66,6 +72,7 @@ export class SemesterEventController {
 
   @Post(":id/classes")
   @ApiOperation({ summary: "Add classes to a semester event" })
+  @ApiBearerAuth()
   @ApiResponse({
     status: 200,
     description: "Classes have been successfully added to the semester event.",
@@ -79,6 +86,7 @@ export class SemesterEventController {
 
   @Delete(":id/classes/:classId")
   @ApiOperation({ summary: "Remove a class from a semester event" })
+  @ApiBearerAuth()
   @ApiResponse({
     status: 200,
     description: "The class has been successfully removed from the semester event.",

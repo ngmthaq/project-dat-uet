@@ -10,7 +10,7 @@ import {
   UploadedFile,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { JobService } from "./providers/job.service";
 import { CreateJobDto } from "./dto/create-job.dto";
 import { UpdateJobDto } from "./dto/update-job.dto";
@@ -24,6 +24,7 @@ export class JobController {
   @UseInterceptors(FileInterceptor("cover"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Create job" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 201, description: "Create job successfully" })
   @ApiResponse({ status: 400, description: "Create job failed" })
   create(@Body() createJobDto: CreateJobDto, @UploadedFile() cover?: Express.Multer.File) {
@@ -32,6 +33,7 @@ export class JobController {
 
   @Get()
   @ApiOperation({ summary: "Get all jobs" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get all jobs successfully" })
   @ApiResponse({ status: 404, description: "Jobs not found" })
   findAll() {
@@ -40,6 +42,7 @@ export class JobController {
 
   @Get(":id")
   @ApiOperation({ summary: "Get job by id" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get job successfully" })
   @ApiResponse({ status: 404, description: "Job not found" })
   @ApiResponse({ status: 400, description: "Invalid id" })
@@ -51,6 +54,7 @@ export class JobController {
   @UseInterceptors(FileInterceptor("cover"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Update job" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Update job successfully" })
   @ApiResponse({ status: 404, description: "Job not found" })
   @ApiResponse({ status: 400, description: "Invalid id" })
@@ -64,6 +68,7 @@ export class JobController {
 
   @Delete(":id")
   @ApiOperation({ summary: "Delete job" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Delete job successfully" })
   @ApiResponse({ status: 404, description: "Job not found" })
   @ApiResponse({ status: 400, description: "Invalid id" })

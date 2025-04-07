@@ -10,7 +10,14 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { UserService } from "./providers/user.service";
 import { CreateTeacherDto } from "./dto/create-teacher.dto";
 import { UpdateTeacherDto } from "./dto/update-teacher.dto";
@@ -28,6 +35,7 @@ export class UserController {
 
   @Get("teachers")
   @ApiOperation({ summary: "Get all teachers" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get teachers successfully" })
   public async getTeachers() {
     return this.userService.getTeachers();
@@ -35,6 +43,7 @@ export class UserController {
 
   @Get("teachers/:id")
   @ApiOperation({ summary: "Get teacher by id" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get teacher successfully" })
   @ApiResponse({ status: 404, description: "Teacher not found" })
   public async getTeacher(@Param("id") id: number) {
@@ -45,6 +54,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Create teacher" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 201, description: "Create teacher successfully" })
   @ApiResponse({ status: 400, description: "Create teacher failed" })
   public async createTeacher(
@@ -58,6 +68,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Update teacher" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Update teacher successfully" })
   @ApiResponse({ status: 400, description: "Update teacher failed" })
   @ApiResponse({ status: 404, description: "Teacher not found" })
@@ -71,6 +82,7 @@ export class UserController {
 
   @Delete("teachers/:id")
   @ApiOperation({ summary: "Delete teacher" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Delete teacher successfully" })
   @ApiResponse({ status: 404, description: "Teacher not found" })
   public async deleteTeacher(@Param("id") id: number) {
@@ -79,6 +91,7 @@ export class UserController {
 
   @Get("teachers/:id/subjects")
   @ApiOperation({ summary: "Get all teacher subjects" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get teacher subjects successfully" })
   @ApiResponse({ status: 404, description: "Teacher not found" })
   public async getTeacherSubjects(@Param("id") id: number) {
@@ -87,6 +100,7 @@ export class UserController {
 
   @Post("teachers/:id/subjects")
   @ApiOperation({ summary: "Add subject to teacher" })
+  @ApiBearerAuth()
   @ApiBody({ schema: { type: "object", properties: { subjectId: { type: "number" } } } })
   @ApiResponse({ status: 200, description: "Add subject to teacher successfully" })
   @ApiResponse({ status: 404, description: "Teacher not found" })
@@ -97,6 +111,7 @@ export class UserController {
 
   @Delete("teachers/:id/subjects/:subjectId")
   @ApiOperation({ summary: "Remove subject from teacher" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Remove subject from teacher successfully" })
   @ApiResponse({ status: 404, description: "Teacher not found" })
   @ApiResponse({ status: 404, description: "Subject not found" })
@@ -109,6 +124,7 @@ export class UserController {
 
   @Get("teachers/:id/classes")
   @ApiOperation({ summary: "Get all teacher classes" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get teacher classes successfully" })
   @ApiResponse({ status: 404, description: "Teacher not found" })
   public async getTeacherClasses(@Param("id") id: number) {
@@ -117,6 +133,7 @@ export class UserController {
 
   @Get("companies")
   @ApiOperation({ summary: "Get all companies" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get companies successfully" })
   public async getCompanies() {
     return this.userService.getCompanies();
@@ -124,6 +141,7 @@ export class UserController {
 
   @Get("companies/:id")
   @ApiOperation({ summary: "Get company by id" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get company successfully" })
   @ApiResponse({ status: 404, description: "Company not found" })
   public async getCompany(@Param("id") id: number) {
@@ -132,6 +150,7 @@ export class UserController {
 
   @Get("companies/:id/jobs")
   @ApiOperation({ summary: "Get company jobs" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get company jobs successfully" })
   @ApiResponse({ status: 404, description: "Company not found" })
   public async getCompanyJobs(@Param("id") id: number) {
@@ -142,6 +161,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Create company" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 201, description: "Create company successfully" })
   @ApiResponse({ status: 400, description: "Create company failed" })
   public async createCompany(
@@ -155,6 +175,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Update company" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Update company successfully" })
   @ApiResponse({ status: 400, description: "Update company failed" })
   @ApiResponse({ status: 404, description: "Company not found" })
@@ -168,6 +189,7 @@ export class UserController {
 
   @Delete("companies/:id")
   @ApiOperation({ summary: "Delete company" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Delete company successfully" })
   @ApiResponse({ status: 404, description: "Company not found" })
   public async deleteCompany(@Param("id") id: number) {
@@ -176,6 +198,7 @@ export class UserController {
 
   @Get("students")
   @ApiOperation({ summary: "Get all students" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get students successfully" })
   public async getStudents() {
     return this.userService.getStudents();
@@ -183,6 +206,7 @@ export class UserController {
 
   @Get("students/:id")
   @ApiOperation({ summary: "Get student by id" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get student successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   public async getStudent(@Param("id") id: number) {
@@ -193,6 +217,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Create student" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 201, description: "Create student successfully" })
   @ApiResponse({ status: 400, description: "Create student failed" })
   public async createStudent(
@@ -206,6 +231,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Update student" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Update student successfully" })
   @ApiResponse({ status: 400, description: "Update student failed" })
   @ApiResponse({ status: 404, description: "Student not found" })
@@ -219,6 +245,7 @@ export class UserController {
 
   @Delete("students/:id")
   @ApiOperation({ summary: "Delete student" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Delete student successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   public async deleteStudent(@Param("id") id: number) {
@@ -227,6 +254,7 @@ export class UserController {
 
   @Get("students/:id/cvs")
   @ApiOperation({ summary: "Get all student CVs" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get student CVs successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   public async getStudentCVs(@Param("id") id: number) {
@@ -235,6 +263,7 @@ export class UserController {
 
   @Get("students/:id/cvs/:cvId")
   @ApiOperation({ summary: "Get student CV by id" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get student CV successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 404, description: "Student CV not found" })
@@ -246,6 +275,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor("cv"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Upload student CV" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Upload CV successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 400, description: "Upload CV failed" })
@@ -255,6 +285,7 @@ export class UserController {
 
   @Delete("students/:id/cvs/:cvId")
   @ApiOperation({ summary: "Delete student CV" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Delete student CV successfully" })
   @ApiResponse({ status: 404, description: "Student CV not found" })
   public async deleteStudentCV(@Param("id") id: number, @Param("cvId") cvId: number) {
@@ -263,6 +294,7 @@ export class UserController {
 
   @Get("students/:id/report")
   @ApiOperation({ summary: "Get student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Get student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 404, description: "Student report not found" })
@@ -272,6 +304,7 @@ export class UserController {
 
   @Post("students/:id/report")
   @ApiOperation({ summary: "Create student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Create student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 400, description: "Create student report failed" })
@@ -282,10 +315,24 @@ export class UserController {
     return this.userService.createStudentReport(id, createStudentReportDto);
   }
 
+  @Post("students/:id/report/external")
+  @ApiOperation({ summary: "Create student report from external source" })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: "Create student report successfully" })
+  @ApiResponse({ status: 404, description: "Student not found" })
+  @ApiResponse({ status: 400, description: "Create student report failed" })
+  public async createStudentReportExternal(
+    @Param("id") id: number,
+    @Body() createCompanyDto: CreateCompanyDto,
+  ) {
+    await this.userService.createStudentReportExternal(id, createCompanyDto);
+  }
+
   @Post("students/:id/upload")
   @UseInterceptors(FileInterceptor("attachment"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Upload student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Upload student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 400, description: "Upload student report failed" })
@@ -298,6 +345,7 @@ export class UserController {
 
   @Patch("students/:id/report")
   @ApiOperation({ summary: "Update student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Update student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 404, description: "Student report not found" })
@@ -311,6 +359,7 @@ export class UserController {
 
   @Delete("students/:id/report")
   @ApiOperation({ summary: "Delete student report" })
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, description: "Delete student report successfully" })
   @ApiResponse({ status: 404, description: "Student not found" })
   @ApiResponse({ status: 404, description: "Student report not found" })
