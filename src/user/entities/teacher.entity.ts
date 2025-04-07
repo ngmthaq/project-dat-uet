@@ -1,9 +1,18 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Nullable } from "@/@types";
 import { BaseEntity } from "@/@core/models/base.entity";
 import { Subject } from "@/subject/entities/subject.entity";
 import { Class } from "@/class/entities/class.entity";
 import { Gender } from "../enums/gender.enum";
+import { User } from "./user.entity";
 
 @Entity()
 export class Teacher extends BaseEntity {
@@ -35,5 +44,9 @@ export class Teacher extends BaseEntity {
   public subjects: Subject[];
 
   @OneToMany("Class", (classes: Class) => classes.teacher)
+  @JoinColumn()
   classes: Class[];
+
+  @OneToOne("User", (user: User) => user.teacher)
+  public user: User;
 }

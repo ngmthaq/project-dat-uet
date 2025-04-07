@@ -4,14 +4,15 @@ import { Nullable } from "@/@types";
 import { Gender } from "../enums/gender.enum";
 import { StudentReport } from "./student-report.entity";
 import { StudentCv } from "./student-cv.entity";
+import { User } from "./user.entity";
 
 @Entity()
 export class Student extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column()
-  public teacherId: number;
+  @Column({ type: "int", nullable: true, default: null })
+  public teacherId: Nullable<number>;
 
   @Column({ type: "varchar" })
   public name: string;
@@ -41,4 +42,7 @@ export class Student extends BaseEntity {
   @OneToMany("StudentCv", (studentCv: StudentCv) => studentCv.student)
   @JoinColumn()
   public studentCvs: StudentCv[];
+
+  @OneToOne("User", (user: User) => user.student)
+  public user: User;
 }

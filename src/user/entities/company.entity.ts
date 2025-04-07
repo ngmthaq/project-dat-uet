@@ -1,8 +1,9 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Nullable } from "@/@types";
 import { BaseEntity } from "@/@core/models/base.entity";
 import { Job } from "@/job/entities/job.entity";
 import { CompanyType } from "../enums/company-type.enum";
+import { User } from "./user.entity";
 
 @Entity()
 export class Company extends BaseEntity {
@@ -36,4 +37,7 @@ export class Company extends BaseEntity {
   @OneToMany("Job", (job: Job) => job.company)
   @JoinColumn()
   public jobs: Job[];
+
+  @OneToOne("User", (user: User) => user.company)
+  public user: User;
 }
