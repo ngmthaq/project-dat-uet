@@ -21,6 +21,8 @@ import { StudentCv } from "./entities/student-cv.entity";
 import { StudentReport } from "./entities/student-report.entity";
 import { SemesterEvent } from "@/semester-event/entities/semester-event.entity";
 import { CalendarEvent } from "@/calendar-event/entities/calendar-event.entity";
+import { Notification } from "@/notification/entities/notification.entity";
+import { NotificationModule } from "@/notification/notification.module";
 
 const GlobalUserGuard = { provide: APP_GUARD, useClass: RoleGuard };
 
@@ -40,8 +42,10 @@ const GlobalUserGuard = { provide: APP_GUARD, useClass: RoleGuard };
       Subject,
       SemesterEvent,
       CalendarEvent,
+      Notification,
     ]),
     forwardRef(() => AuthModule),
+    forwardRef(() => NotificationModule),
   ],
   controllers: [UserController],
   providers: [GlobalUserGuard, UserGateway, UserSchedule, UserService, EmailExistedRule],

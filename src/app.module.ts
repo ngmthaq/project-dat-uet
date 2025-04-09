@@ -8,6 +8,7 @@ import { SubjectModule } from "./subject/subject.module";
 import { ClassModule } from "./class/class.module";
 import { SemesterEventModule } from "./semester-event/semester-event.module";
 import { CalendarEventModule } from "./calendar-event/calendar-event.module";
+import { NotificationModule } from "./notification/notification.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CalendarEventModule } from "./calendar-event/calendar-event.module";
     ClassModule,
     SemesterEventModule,
     CalendarEventModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

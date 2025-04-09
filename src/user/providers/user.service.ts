@@ -21,16 +21,21 @@ import { UpdateReportDto } from "../dto/update-report.dto";
 import { StudentReport } from "../entities/student-report.entity";
 import { Job } from "@/job/entities/job.entity";
 import { CompanyType } from "../enums/company-type.enum";
+import { NotificationService } from "@/notification/providers/notification.service";
+import { StudentReportStatus } from "../enums/student-report-status.enum";
 
 @Injectable()
 export class UserService {
   public constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Student) private studentRepo: Repository<Student>,
+    @InjectRepository(Teacher) private teacherRepo: Repository<Teacher>,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     @InjectRepository(StudentCv) private cvRepo: Repository<StudentCv>,
     @InjectRepository(StudentReport) private reportRepo: Repository<StudentReport>,
     @InjectRepository(Job) private jobRepo: Repository<Job>,
     private encryptionService: EncryptionService,
+    private notificationService: NotificationService,
     private dataSource: DataSource,
   ) {}
 
@@ -539,6 +544,9 @@ export class UserService {
     cv.student = user.student;
     await this.cvRepo.save(cv);
 
+    user.student.studentCvs.push(cv);
+    await this.studentRepo.save(user.student);
+
     return true;
   }
 
@@ -556,6 +564,9 @@ export class UserService {
     await this.cvRepo.remove(cv);
     await fs.unlink(cv.cvPath);
 
+    user.student.studentCvs = user.student.studentCvs.filter((cv) => cv.id !== cvId);
+    await this.studentRepo.save(user.student);
+
     return true;
   }
 
@@ -571,12 +582,14 @@ export class UserService {
   }
 
   public async createStudentReport(id: number, createReportDto: CreateReportDto) {
-    const user = await this.userRepo.findOne({
+    let user = await this.userRepo.findOne({
       where: { id, role: Role.Student },
       relations: { student: true },
     });
 
     if (!user) throw new NotFoundException("student not found");
+    if (!user.student) throw new NotFoundException("student not found");
+    if (user.student.studentReport) throw new BadRequestException("student report already exists");
 
     const job = await this.jobRepo.findOne({
       where: { id: createReportDto.jobId },
@@ -584,9 +597,23 @@ export class UserService {
 
     if (!job) throw new NotFoundException("job not found");
 
-    const studentReport = new StudentReport();
+    let studentReport = new StudentReport();
     studentReport.job = job;
-    await this.userRepo.save(studentReport);
+    studentReport = await this.reportRepo.save(studentReport);
+
+    user.student.studentReport = studentReport;
+    const student = await this.studentRepo.save(user.student);
+
+    user.student = student;
+    user = await this.userRepo.save(user);
+
+    await this.notificationService.create({
+      title: "New Student Report Submission",
+      content: `Student ${user.student.name} has submitted a request for job ${job.title}`,
+      userId: user.id,
+      metadata: JSON.stringify({ job: job.id, user: user.id }),
+      isRead: false,
+    });
 
     return true;
   }
@@ -597,14 +624,17 @@ export class UserService {
     await queryRunner.startTransaction();
 
     try {
-      const user = await this.userRepo.findOne({
+      let user = await this.userRepo.findOne({
         where: { id, role: Role.Student },
         relations: { student: true },
       });
 
       if (!user) throw new NotFoundException("student not found");
+      if (!user.student) throw new NotFoundException("student not found");
+      if (user.student.studentReport)
+        throw new BadRequestException("student report already exists");
 
-      const company = new Company();
+      let company = new Company();
       company.name = createCompanyDto.name;
       company.address = createCompanyDto.address;
       company.phoneNumber = createCompanyDto.phoneNumber;
@@ -612,19 +642,40 @@ export class UserService {
       company.type = CompanyType.External;
       company.domain = createCompanyDto.domain;
       company.website = createCompanyDto.website;
-      await this.companyRepo.save(company);
+      company = await this.companyRepo.save(company);
 
-      const job = new Job();
+      let newCompanyUser = new User();
+      newCompanyUser.email = createCompanyDto.email;
+      newCompanyUser.password = await this.encryptionService.encrypt(DEFAULT_PASSWORD);
+      newCompanyUser.role = Role.Company;
+      newCompanyUser.company = company;
+      newCompanyUser = await this.userRepo.save(newCompanyUser);
+
+      let job = new Job();
       job.title = createCompanyDto.name;
       job.content = createCompanyDto.description;
       job.from = new Date();
       job.to = new Date();
-      job.company = company;
-      await this.jobRepo.save(job);
+      job.company = newCompanyUser.company;
+      job = await this.jobRepo.save(job);
 
-      const studentReport = new StudentReport();
+      let studentReport = new StudentReport();
       studentReport.job = job;
-      await this.userRepo.save(studentReport);
+      studentReport = await this.reportRepo.save(studentReport);
+
+      user.student.studentReport = studentReport;
+      const student = await this.studentRepo.save(user.student);
+
+      user.student = student;
+      user = await this.userRepo.save(user);
+
+      await this.notificationService.create({
+        title: "New Student Report Submission",
+        content: `Student ${user.student.name} has submitted a request for job ${job.title}`,
+        userId: user.id,
+        metadata: JSON.stringify({ job: job.id, user: user.id }),
+        isRead: false,
+      });
       await queryRunner.commitTransaction();
 
       return true;
@@ -645,9 +696,8 @@ export class UserService {
 
     if (!user) throw new NotFoundException("student not found");
 
-    const report = new StudentReport();
-    report.attachmentPath = reportFile.path;
-    await this.userRepo.save(report);
+    user.student.studentReport.attachmentPath = reportFile.path;
+    await this.reportRepo.save(user.student.studentReport);
 
     return true;
   }
@@ -655,16 +705,33 @@ export class UserService {
   public async updateStudentReport(id: number, updateReportDto: UpdateReportDto) {
     const user = await this.userRepo.findOne({
       where: { id, role: Role.Student },
-      relations: { student: { studentReport: true } },
+      relations: { student: { studentReport: { job: { company: true } } } },
     });
 
     if (!user) throw new NotFoundException("student not found");
     if (!user.student.studentReport) throw new NotFoundException("student report not found");
-    const report = user.student.studentReport;
-    report.score = updateReportDto.score;
-    report.comment = updateReportDto.comment;
-    report.status = updateReportDto.status;
-    await this.userRepo.save(report);
+    user.student.studentReport.score = updateReportDto.score;
+    user.student.studentReport.comment = updateReportDto.comment;
+    user.student.studentReport.status = updateReportDto.status;
+    const studentReport = await this.reportRepo.save(user.student.studentReport);
+
+    if (studentReport.status === StudentReportStatus.InProgress) {
+      await this.notificationService.create({
+        title: "Student Report Status Update",
+        content: `Company ${studentReport.job.company.name} has approved your request in job: ${studentReport.job.title}`,
+        userId: user.id,
+        metadata: JSON.stringify({ job: studentReport.job.id, user: user.id }),
+        isRead: false,
+      });
+    } else if (studentReport.status === StudentReportStatus.Rejected) {
+      await this.notificationService.create({
+        title: "Student Report Status Update",
+        content: `Company ${studentReport.job.company.name} has rejected your request in job: ${studentReport.job.title}`,
+        userId: user.id,
+        metadata: JSON.stringify({ job: studentReport.job.id, user: user.id }),
+        isRead: false,
+      });
+    }
 
     return true;
   }
@@ -679,7 +746,10 @@ export class UserService {
     if (!user.student.studentReport) throw new NotFoundException("student report not found");
 
     const report = user.student.studentReport;
-    await this.reportRepo.remove(report);
+    await this.reportRepo.softDelete(report);
+
+    user.student.studentReport = null;
+    await this.studentRepo.save(user.student);
     await fs.unlink(report.attachmentPath);
 
     return true;

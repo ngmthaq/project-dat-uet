@@ -7,6 +7,7 @@ import { Teacher } from "./teacher.entity";
 import { Company } from "./company.entity";
 import { SemesterEvent } from "@/semester-event/entities/semester-event.entity";
 import { CalendarEvent } from "@/calendar-event/entities/calendar-event.entity";
+import { Notification } from "@/notification/entities/notification.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -41,4 +42,8 @@ export class User extends BaseEntity {
   @OneToMany("CalendarEvent", (calendarEvent: CalendarEvent) => calendarEvent.user)
   @JoinColumn()
   public calendarEvents: CalendarEvent[];
+
+  @OneToMany("Notification", (notification: Notification) => notification.user)
+  @JoinColumn()
+  public notifications: Notification[];
 }

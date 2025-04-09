@@ -35,5 +35,6 @@ const GlobalAuthGuard = { provide: APP_GUARD, useClass: AuthGuard };
     AuthService,
     process.env.APP_ENABLE_AUTH === "true" ? GlobalAuthGuard : undefined,
   ].filter(Boolean),
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

@@ -13,6 +13,7 @@ import { Job } from "@/job/entities/job.entity";
 import { StudentCv } from "@/user/entities/student-cv.entity";
 import { StudentReport } from "@/user/entities/student-report.entity";
 import { Major } from "@/major/entities/major.entity";
+import { Notification } from "@/notification/entities/notification.entity";
 
 export const createDataSource = async (configService: ConfigService): Promise<DataSource> => {
   return new DataSource({
@@ -36,6 +37,7 @@ export const createDataSource = async (configService: ConfigService): Promise<Da
       StudentCv,
       StudentReport,
       Major,
+      Notification,
     ],
     synchronize: true,
   });
