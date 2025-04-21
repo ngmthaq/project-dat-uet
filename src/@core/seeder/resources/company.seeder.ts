@@ -18,7 +18,7 @@ export class CompanySeeder {
         type: faker.helpers.arrayElement(Object.values(CompanyType)),
         domain: faker.internet.domainWord().toUpperCase(),
         website: faker.internet.url(),
-        logoPath: `public/uploads/${faker.string.uuid()}.png`,
+        logoPath: null,
       }));
 
     await companyRepository.save(companies);

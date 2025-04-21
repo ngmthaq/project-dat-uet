@@ -26,7 +26,7 @@ export class StudentSeeder {
         }),
         className: `K${faker.number.int({ min: 50, max: 60 })}S${faker.number.int({ min: 1, max: 3 })}`,
         phoneNumber: faker.phone.number(),
-        avatarPath: `public/uploads/${faker.string.uuid()}.png`,
+        avatarPath: null,
         teacher: faker.helpers.arrayElement(teachers),
       }));
 

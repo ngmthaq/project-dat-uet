@@ -17,7 +17,7 @@ export class TeacherSeeder {
         birthday: faker.date.past({ years: 30 }),
         fax: faker.phone.number(),
         phoneNumber: faker.phone.number(),
-        avatarPath: `public/uploads/${faker.string.uuid()}.png`,
+        avatarPath: null,
       }));
 
     await teacherRepository.save(teachers);
