@@ -544,6 +544,7 @@ export class UserService {
     cv.student = user.student;
     await this.cvRepo.save(cv);
 
+    if (!user.student.studentCvs) user.student.studentCvs = [];
     user.student.studentCvs.push(cv);
     await this.studentRepo.save(user.student);
 
