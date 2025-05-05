@@ -534,7 +534,7 @@ export class UserService {
   public async uploadStudentCV(id: number, cvFile: Express.Multer.File) {
     const user = await this.userRepo.findOne({
       where: { id, role: Role.Student },
-      relations: { student: true },
+      relations: { student: { studentCvs: true } },
     });
 
     if (!user) throw new NotFoundException("student not found");
